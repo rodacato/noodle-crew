@@ -171,7 +171,7 @@ The **default crew** (3 experts, Claude, standard phases) is just an example. Yo
 
 3. **Create your own workflow** — If your product development process is different, configure NoodleCrew to match it.
 
-See [Creating Crews](../marketplace/creating-crews.md) for how to customize.
+See [Marketplace](../marketplace/index.md) for how to customize.
 
 ---
 

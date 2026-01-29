@@ -108,7 +108,7 @@ NoodleCrew uses specialized AI experts, each with a defined role. Configure whic
 | **Performance Reviewer** | Performance ADRs, Benchmarks | Review |
 | **Accessibility Reviewer** | A11y ADRs, WCAG Compliance | Review |
 
-[Learn about each expert →](docs/guides/experts.md)
+[Learn about each expert →](docs/guides/index.md)
 
 ---
 
@@ -212,7 +212,7 @@ validation:
 
 **Prerequisites:** Claude Code CLI and/or Gemini CLI installed with active subscriptions.
 
-[Full configuration reference →](docs/guides/configuration.md) | [Creating custom crews →](docs/marketplace/creating-crews.md)
+[Full configuration reference →](docs/guides/index.md) | [Marketplace →](docs/marketplace/index.md)
 
 ---
 
@@ -231,7 +231,7 @@ Pre-configured crews for common verticals:
 ncrew init my-project --crew saas-b2b
 ```
 
-[Browse all crews →](docs/marketplace/catalog.md) | [Create your own →](docs/marketplace/creating-crews.md)
+[Browse all crews →](docs/marketplace/index.md)
 
 ---
 

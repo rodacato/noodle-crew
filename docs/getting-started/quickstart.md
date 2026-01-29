@@ -207,7 +207,7 @@ The crew made reasonable decisions based on best practices. If you disagree, the
 
 **Want to customize the crew?**
 - Edit `.noodlecrew.yml` to change experts, LLM settings, or phases
-- See [Configuration Guide](../guides/configuration.md)
+- See [Configuration Guide](../guides/index.md)
 
 **Want to understand the decisions?**
 - Read the generated ADRs in `docs/architecture/adrs/`
