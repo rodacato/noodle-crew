@@ -7,6 +7,7 @@
 ## Overview
 
 Each expert has an `EXPERT.md` file that defines:
+
 - Who the expert is (role)
 - What it produces (outputs)
 - How it thinks (guidelines)
@@ -18,6 +19,48 @@ Each expert has an `EXPERT.md` file that defines:
     ├── prd.md
     └── personas.md
 ```
+
+---
+
+## How Experts Execute
+
+**Experts are autonomous agents, not passive prompts.**
+
+When launched, an expert:
+
+1. **Receives full context** — EXPERT.md + IDEA.md + previous artifacts + TODO.md
+2. **Reads TODO.md** — Finds the next uncompleted task
+3. **Does the work** — Creates/updates files in `docs/`
+4. **Updates state** — Marks task complete in TODO.md, updates INDEX.md
+5. **Commits to git** — `feat(phase): task description`
+6. **Ends its turn** — The loop restarts it automatically
+
+The expert has **access to the filesystem and shell**. It manages its own output — the orchestrator doesn't parse responses or extract artifacts.
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  EXPERT (autonomous one-shot command)                       │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│  Receives:                                                  │
+│  ├── EXPERT.md (this file - role definition)               │
+│  ├── IDEA.md (original input)                              │
+│  ├── TODO.md (pending tasks)                               │
+│  ├── Previous artifacts (docs/*)                           │
+│  └── Instructions: "Do ONE task, commit, end turn"         │
+│                                                             │
+│  Does (autonomously):                                       │
+│  ├── Reads TODO.md → picks next task                       │
+│  ├── Creates artifacts in docs/                            │
+│  ├── Updates TODO.md ✅                                    │
+│  ├── Updates INDEX.md                                      │
+│  ├── Git commit                                            │
+│  └── Ends turn                                             │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
+```
+
+See [Architecture](../concepts/architecture.md) for the complete execution loop.
 
 ---
 
@@ -453,6 +496,7 @@ See [Marketplace](../marketplace/index.md) for publishing experts.
 
 ## Further Reading
 
-- [Architecture](../concepts/architecture.md) — How experts are invoked
+- [Architecture](../concepts/architecture.md) — How the autonomous execution loop works
+- [State Files](state-files.md) — INDEX.md, TODO.md, and blocker lifecycle
 - [Project Structure](project-structure.md) — Where experts live
 - [Configuration](../guides/index.md) — Configuring experts

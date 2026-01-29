@@ -4,186 +4,185 @@
 
 ---
 
-## System Overview
+## The Core Idea
 
-NoodleCrew is an orchestrator that coordinates AI experts to produce product artifacts. It's not a single AI call — it's a loop that manages state, delegates to experts, and builds documentation incrementally.
+NoodleCrew runs **autonomous expert agents** in a loop. Each expert is a one-shot command that:
 
-```
-┌─────────────────────────────────────────────────────────────────────┐
-│                         NOODLECREW SYSTEM                           │
-├─────────────────────────────────────────────────────────────────────┤
-│                                                                     │
-│  ┌──────────────┐    ┌──────────────┐    ┌──────────────┐         │
-│  │   manifest   │    │    State     │    │   Experts    │         │
-│  │    .yml      │    │  INDEX.md    │    │  EXPERT.md   │         │
-│  │              │    │  TODO.md     │    │  templates/  │         │
-│  └──────┬───────┘    └──────┬───────┘    └──────┬───────┘         │
-│         │                   │                   │                  │
-│         └───────────────────┼───────────────────┘                  │
-│                             │                                      │
-│                             ▼                                      │
-│                    ┌────────────────┐                              │
-│                    │  Execution     │                              │
-│                    │  Loop          │◄──────────────────┐          │
-│                    └────────┬───────┘                   │          │
-│                             │                           │          │
-│                             ▼                           │          │
-│                    ┌────────────────┐          ┌───────┴────────┐ │
-│                    │  LLM Call      │          │  Termination   │ │
-│                    │  (Claude/      │          │  Check         │ │
-│                    │   Gemini)      │          └────────────────┘ │
-│                    └────────┬───────┘                              │
-│                             │                                      │
-│                             ▼                                      │
-│                    ┌────────────────┐                              │
-│                    │  Artifacts     │                              │
-│                    │  docs/         │                              │
-│                    │  questions/    │                              │
-│                    └────────────────┘                              │
-│                                                                     │
-└─────────────────────────────────────────────────────────────────────┘
-```
+- Receives full context (phase, pending tasks, previous artifacts)
+- Decides what to do next
+- Does the work (creates files, updates state, commits)
+- Ends its turn
+
+The loop simply restarts experts until all work is done.
 
 ---
 
 ## The Execution Loop
 
-When you run `ncrew run`, NoodleCrew starts an autonomous loop (inspired by DLP's "Ralph Wiggum Loop"). Each iteration does one unit of work.
-
-### Loop Diagram
+When you run `ncrew run`, this happens:
 
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
-│                       EXECUTION LOOP                                │
+│                    RALPH WIGGUM LOOP                                 │
+│                 (inspired by DLP)                                    │
 ├─────────────────────────────────────────────────────────────────────┤
 │                                                                     │
 │  START                                                              │
 │    │                                                                │
 │    ▼                                                                │
-│  ┌─────────────────────────────────────────┐                       │
-│  │ 1. LOAD STATE                           │                       │
-│  │    - Read INDEX.md (current phase)      │                       │
-│  │    - Read TODO.md (pending tasks)       │                       │
-│  └────────────────────┬────────────────────┘                       │
-│                       │                                             │
-│                       ▼                                             │
-│  ┌─────────────────────────────────────────┐                       │
-│  │ 2. DETERMINE CURRENT TASK               │                       │
-│  │    - Which phase are we in?             │                       │
-│  │    - What's the next unchecked task?    │                       │
-│  └────────────────────┬────────────────────┘                       │
-│                       │                                             │
-│                       ▼                                             │
-│  ┌─────────────────────────────────────────┐                       │
-│  │ 3. SELECT EXPERT                        │                       │
-│  │    - Load EXPERT.md for current phase   │                       │
-│  │    - Load templates for output format   │                       │
-│  └────────────────────┬────────────────────┘                       │
-│                       │                                             │
-│                       ▼                                             │
-│  ┌─────────────────────────────────────────┐                       │
-│  │ 4. BUILD PROMPT CONTEXT                 │                       │
-│  │    - IDEA.md (original input)           │                       │
-│  │    - EXPERT.md (role definition)        │                       │
-│  │    - Templates (output format)          │                       │
-│  │    - Previous artifacts (context)       │                       │
-│  │    - INDEX.md (project state)           │                       │
-│  └────────────────────┬────────────────────┘                       │
-│                       │                                             │
-│                       ▼                                             │
-│  ┌─────────────────────────────────────────┐                       │
-│  │ 5. CALL LLM                             │                       │
-│  │    - Send prompt to Claude/Gemini       │                       │
-│  │    - Receive response                   │                       │
-│  └────────────────────┬────────────────────┘                       │
-│                       │                                             │
-│                       ▼                                             │
-│  ┌─────────────────────────────────────────┐                       │
-│  │ 6. PARSE RESPONSE                       │                       │
-│  │    - Extract artifacts (markdown files) │                       │
-│  │    - Detect blockers (questions)        │                       │
-│  │    - Validate output format             │                       │
-│  └────────────────────┬────────────────────┘                       │
-│                       │                                             │
-│                       ▼                                             │
-│  ┌─────────────────────────────────────────┐                       │
-│  │ 7. WRITE ARTIFACTS                      │                       │
-│  │    - Save to docs/{phase}/              │                       │
-│  │    - Create questions/ if blocker       │                       │
-│  └────────────────────┬────────────────────┘                       │
-│                       │                                             │
-│                       ▼                                             │
-│  ┌─────────────────────────────────────────┐                       │
-│  │ 8. UPDATE STATE                         │                       │
-│  │    - Mark task complete in TODO.md      │                       │
-│  │    - Update INDEX.md (artifacts, phase) │                       │
-│  │    - Increment iteration counter        │                       │
-│  └────────────────────┬────────────────────┘                       │
-│                       │                                             │
-│                       ▼                                             │
-│  ┌─────────────────────────────────────────┐                       │
-│  │ 9. GIT COMMIT                           │                       │
-│  │    - Stage changed files                │                       │
-│  │    - Commit with message:               │                       │
-│  │      "feat(phase): task (iteration N)"  │                       │
-│  └────────────────────┬────────────────────┘                       │
-│                       │                                             │
-│                       ▼                                             │
-│  ┌─────────────────────────────────────────┐                       │
-│  │ 10. CHECK TERMINATION                   │                       │
-│  │                                         │                       │
-│  │    All phases complete?  ───────────► EXIT (success)            │
-│  │            │                                                    │
-│  │            ▼                                                    │
-│  │    Human gate reached? ─────────────► PAUSE (await review)      │
-│  │            │                                                    │
-│  │            ▼                                                    │
-│  │    Blocker detected? ───────────────► PAUSE (await answer)      │
-│  │            │                                                    │
-│  │            ▼                                                    │
-│  │    Max iterations? ─────────────────► EXIT (safety limit)       │
-│  │            │                                                    │
-│  │            ▼                                                    │
-│  │    Otherwise ───────────────────────► LOOP (go to step 1)       │
-│  │                                         │                       │
-│  └─────────────────────────────────────────┘                       │
+│  ┌─────────────────────────────────────────────────────────────┐   │
+│  │ 1. BUILD EXPERT PROMPT                                      │   │
+│  │                                                             │   │
+│  │    Combine:                                                 │   │
+│  │    - EXPERT.md (role: "You are a Product Owner...")        │   │
+│  │    - Current phase from manifest.yml                        │   │
+│  │    - IDEA.md (original input)                               │   │
+│  │    - Previous artifacts (docs/*)                            │   │
+│  │    - Instructions: "Read TODO.md, do ONE task, commit"      │   │
+│  │                                                             │   │
+│  └────────────────────────┬────────────────────────────────────┘   │
+│                           │                                         │
+│                           ▼                                         │
+│  ┌─────────────────────────────────────────────────────────────┐   │
+│  │ 2. LAUNCH EXPERT (one-shot autonomous command)              │   │
+│  │                                                             │   │
+│  │    The expert is AUTONOMOUS. It has access to:              │   │
+│  │    - File system (read/write)                               │   │
+│  │    - Shell commands (git, etc)                              │   │
+│  │                                                             │   │
+│  │    The expert does ALL of this on its own:                  │   │
+│  │    ├── Reads TODO.md to find next task                      │   │
+│  │    ├── Decides what to do                                   │   │
+│  │    ├── Creates artifacts in docs/                           │   │
+│  │    ├── Updates TODO.md (marks task complete)                │   │
+│  │    ├── Updates INDEX.md (project state)                     │   │
+│  │    ├── Git commit                                           │   │
+│  │    └── Ends its turn                                        │   │
+│  │                                                             │   │
+│  └────────────────────────┬────────────────────────────────────┘   │
+│                           │                                         │
+│                           ▼                                         │
+│  ┌─────────────────────────────────────────────────────────────┐   │
+│  │ 3. LOG OUTPUT                                               │   │
+│  │    Save expert's work to .noodlecrew/logs/                  │   │
+│  └────────────────────────┬────────────────────────────────────┘   │
+│                           │                                         │
+│                           ▼                                         │
+│  ┌─────────────────────────────────────────────────────────────┐   │
+│  │ 4. CHECK TERMINATION                                        │   │
+│  │                                                             │   │
+│  │    All phases complete?  ───────────► EXIT (success)        │   │
+│  │            │                                                │   │
+│  │            ▼                                                │   │
+│  │    Human gate reached? ─────────────► PAUSE (await review)  │   │
+│  │            │                                                │   │
+│  │            ▼                                                │   │
+│  │    Blocker file created? ───────────► PAUSE (await answer)  │   │
+│  │            │                                                │   │
+│  │            ▼                                                │   │
+│  │    Max iterations? ─────────────────► EXIT (safety limit)   │   │
+│  │            │                                                │   │
+│  │            ▼                                                │   │
+│  │    Otherwise ───────────────────────► LOOP (go to step 1)   │   │
+│  │                                                             │   │
+│  └─────────────────────────────────────────────────────────────┘   │
 │                                                                     │
 └─────────────────────────────────────────────────────────────────────┘
 ```
 
-### Iteration Anatomy
+**Key insight:** The orchestrator doesn't parse responses or manage state. The expert is fully autonomous — it reads TODO.md, does one task, updates everything, and ends. The loop just restarts it.
 
-Each iteration is atomic and produces:
-- One artifact (or progress toward one)
-- One git commit
-- Updated state files
+---
 
+## Expert Prompt Structure
+
+Each expert receives a prompt like this:
+
+```markdown
+## Role
+
+You are an expert Product Owner. Your specialty is translating vague ideas
+into clear product requirements.
+
+## Context
+
+We are developing [from IDEA.md]. The project is currently in the Discovery
+phase. Here are the existing artifacts:
+- docs/discovery/prd.md (completed)
+- docs/discovery/personas.md (in progress)
+
+## Instruction
+
+> **NOTE**: You are building this without supervision, so don't prompt for
+> user input. If in doubt, use your best judgment. If you end your turn,
+> you'll be restarted automatically.
+
+Execute the next task:
+
+1. Read `TODO.md` to find the next uncompleted task
+2. Choose **only one** task and complete it
+3. Create/update artifacts in `docs/discovery/`
+4. Update `TODO.md` to mark the task complete
+5. Commit your changes: `feat(discovery): <task description>`
+6. End your turn
+
+**CRITICAL**: You must end your turn after completing ONE task.
+Do NOT continue with the next task.
+
+## Constraints
+
+- Be opinionated: make reasonable decisions, don't ask
+- Document rationale: explain WHY, not just WHAT
+- Only create blockers for genuine ambiguity
 ```
-Iteration 42:
-├── Input
-│   ├── INDEX.md (phase: architecture, iteration: 41)
-│   ├── TODO.md (task: "Define database schema")
-│   └── EXPERT.md (software-architect)
-│
-├── LLM Call
-│   └── Prompt: "You are a Software Architect... create ADR for database..."
-│
-├── Output
-│   └── docs/architecture/adrs/002-database.md (new file)
-│
-├── State Update
-│   ├── INDEX.md (iteration: 42, artifacts: +1)
-│   └── TODO.md (task: ✅ "Define database schema")
-│
-└── Git Commit
-    └── "feat(architecture): ADR-002 database choice (iteration 42)"
-```
+
+The expert is a self-contained worker. It knows what to do, has access to the filesystem, and manages its own output.
+
+---
+
+## What The Orchestrator Does (and Doesn't Do)
+
+### What it does
+
+- Selects which expert to run based on current phase
+- Builds the prompt with context
+- Launches the expert as a one-shot command
+- Logs the output
+- Checks termination conditions
+- Restarts the loop
+
+### What it does NOT do
+
+- Parse LLM responses
+- Extract artifacts from output
+- Update state files (expert does this)
+- Make git commits (expert does this)
+- Decide what task to do next (expert reads TODO.md)
+
+This separation keeps the orchestrator simple and the experts autonomous.
+
+---
+
+## State Files
+
+The orchestrator and experts communicate through markdown files:
+
+| File | Purpose | Who Writes |
+| ---- | ------- | ---------- |
+| **INDEX.md** | Project state (phase, iteration, status) | Expert |
+| **TODO.md** | Task checklist per phase | Expert |
+| **questions/** | Blocker files requiring user input | Expert creates, User resolves |
+| **CREW_COMPLETE** | Termination signal | Expert |
+
+The orchestrator only *reads* these files to determine what to do next. The expert *writes* them as part of its autonomous work.
+
+See [State Files Reference](../reference/state-files.md) for complete specification.
 
 ---
 
 ## Phase Transitions
 
-Phases execute sequentially. The crew moves to the next phase when all tasks in the current phase are complete.
+The expert updates TODO.md as it works. When all tasks in a phase are checked off, the loop selects the next phase's expert.
 
 ```
 ┌──────────────┐         ┌──────────────┐         ┌──────────────┐
@@ -195,19 +194,20 @@ Phases execute sequentially. The crew moves to the next phase when all tasks in 
 │              │         │              │         │              │
 │   COMPLETE   │         │  IN PROGRESS │         │   PENDING    │
 └──────────────┘         └──────────────┘         └──────────────┘
-                               │
-                               │ human_gate: architecture
-                               │
-                               ▼
-                         ┌──────────────┐
-                         │    PAUSE     │
-                         │ for review   │
-                         └──────────────┘
+       │
+       │ human_gate?
+       ▼
+┌──────────────┐
+│    PAUSE     │
+│ for review   │
+└──────────────┘
 ```
 
-### Human Gates
+---
 
-When `human_gates` includes a phase, the loop pauses after completing that phase:
+## Human Gates
+
+When `human_gates` includes a phase, the loop pauses after that phase completes:
 
 ```yaml
 # manifest.yml
@@ -216,170 +216,90 @@ validation:
     - architecture  # Pause after architecture, before implementation
 ```
 
-This lets you review ADRs before the Developer expert starts creating specs.
-
 ---
 
 ## Blocker Handling
 
-When an expert encounters something it can't resolve autonomously, it creates a blocker:
+When an expert creates a file in `questions/`, the loop pauses:
 
 ```
-┌─────────────────────────────────────────────────────────────────────┐
-│                        BLOCKER FLOW                                 │
-├─────────────────────────────────────────────────────────────────────┤
-│                                                                     │
-│  Expert detects ambiguity                                           │
-│         │                                                           │
-│         ▼                                                           │
-│  ┌──────────────────────────────────────────┐                      │
-│  │ Create questions/architect-001-auth.md   │                      │
-│  │                                          │                      │
-│  │ # Authentication Strategy                │                      │
-│  │                                          │                      │
-│  │ ## Question                              │                      │
-│  │ Should we use OAuth2 or custom JWT?      │                      │
-│  │                                          │                      │
-│  │ ## Options                               │                      │
-│  │ A) OAuth2 with Auth0                     │                      │
-│  │ B) Custom JWT implementation             │                      │
-│  │                                          │                      │
-│  │ ## Your Answer                           │                      │
-│  │ [Write your choice here]                 │                      │
-│  └──────────────────────────────────────────┘                      │
-│         │                                                           │
-│         ▼                                                           │
-│  Update INDEX.md: status = "blocked"                                │
-│         │                                                           │
-│         ▼                                                           │
-│  PAUSE execution                                                    │
-│         │                                                           │
-│         ▼                                                           │
-│  User writes answer in questions/ file                              │
-│         │                                                           │
-│         ▼                                                           │
-│  User runs: ncrew resume                                            │
-│         │                                                           │
-│         ▼                                                           │
-│  Loop continues with answer as context                              │
-│                                                                     │
-└─────────────────────────────────────────────────────────────────────┘
+Expert detects genuine ambiguity
+         │
+         ▼
+Creates questions/architect-001-auth.md
+         │
+         ▼
+Loop detects blocker file → PAUSE
+         │
+         ▼
+User writes answer in the file
+         │
+         ▼
+User runs: ncrew resume
+         │
+         ▼
+Loop continues (answer is now context)
 ```
 
-Blockers are **rare** by design. The crew is opinionated and makes reasonable decisions. It only asks when:
-- There's genuine ambiguity that affects architecture
-- Requirements conflict with each other
-- Business decisions are outside technical scope
+Blockers are **rare** by design. Experts are opinionated and make reasonable decisions. They only ask when there's genuine ambiguity that affects the entire project.
 
 ---
 
-## Components Deep Dive
-
-### State Files
-
-| File | Purpose | Modified By |
-|------|---------|-------------|
-| `INDEX.md` | Master state: phase, iteration, artifacts, blockers | Crew |
-| `TODO.md` | Task checklist per phase | Crew |
-
-### Configuration
-
-| File | Purpose | Modified By |
-|------|---------|-------------|
-| `manifest.yml` | Experts, LLMs, phases, gates | User |
-| `CREW.md` | Crew metadata (for marketplace) | User |
-| `PHASES.md` | Phase overview (human-readable) | User |
-
-### Expert Units
-
-Each expert is self-contained:
+## Iteration Example
 
 ```
-.noodlecrew/experts/product-owner/
-├── EXPERT.md          # Role definition (prompt)
-└── templates/         # Output formats
-    ├── prd.md
-    └── personas.md
-```
+Iteration 42:
 
-See [Expert Format](../reference/expert-format.md) for the complete EXPERT.md specification.
+1. Loop builds prompt for software-architect expert
+   - Includes: EXPERT.md, IDEA.md, docs/discovery/*, TODO.md
 
-### Phase Definitions
+2. Expert launches, does its work:
+   - Reads TODO.md → finds "ADR-002: Database choice"
+   - Creates docs/architecture/adrs/002-database.md
+   - Updates TODO.md: ☑ ADR-002
+   - Updates INDEX.md: iteration 42, artifact added
+   - Commits: "feat(architecture): ADR-002 database choice"
+   - Ends turn
 
-Each phase defines what tasks to execute:
+3. Loop logs output to .noodlecrew/logs/
 
-```
-.noodlecrew/phases/discovery/
-└── PHASE.md           # Tasks for this phase
-```
-
----
-
-## LLM Integration
-
-NoodleCrew calls LLMs through their respective CLIs:
-
-| Provider | CLI | Model Options |
-|----------|-----|---------------|
-| Claude | `claude` (Claude Code CLI) | claude, claude-opus-4.5 |
-| Gemini | `gemini` (Vertex AI CLI) | gemini-2.5-flash, gemini-2.5-pro |
-
-### Prompt Structure
-
-Each LLM call includes:
-
-```
-┌─────────────────────────────────────────────────────────────────────┐
-│                         PROMPT CONTEXT                              │
-├─────────────────────────────────────────────────────────────────────┤
-│                                                                     │
-│  SYSTEM:                                                            │
-│  [Contents of EXPERT.md - role definition]                          │
-│                                                                     │
-│  CONTEXT:                                                           │
-│  - Project idea: [IDEA.md]                                          │
-│  - Current phase: [from INDEX.md]                                   │
-│  - Previous artifacts: [relevant docs/ files]                       │
-│  - Output template: [from templates/]                               │
-│                                                                     │
-│  TASK:                                                              │
-│  [Specific task from TODO.md]                                       │
-│                                                                     │
-│  CONSTRAINTS:                                                       │
-│  - Be opinionated, don't ask unnecessary questions                  │
-│  - Follow the template format exactly                               │
-│  - Document rationale for decisions                                 │
-│                                                                     │
-└─────────────────────────────────────────────────────────────────────┘
+4. Loop checks termination:
+   - Not all done → restart loop
 ```
 
 ---
 
 ## Cost and Limits
 
-The loop has safety limits:
+Safety limits prevent runaway execution:
 
-| Limit | Default | Config Key |
-|-------|---------|------------|
-| Max iterations | 100 | `execution.max_iterations` |
-| Max cost | $30.00 | `execution.max_cost` |
-
-Costs are tracked in INDEX.md and the loop exits if limits are reached.
+| Limit          | Default | Config Key                 |
+|----------------|---------|----------------------------|
+| Max iterations | 100     | `execution.max_iterations` |
+| Max cost       | $30.00  | `execution.max_cost`       |
 
 ---
 
 ## Resuming Execution
 
-When paused (human gate or blocker), resume with:
+When paused (human gate or blocker):
 
 ```bash
 ncrew resume
 ```
 
-This:
-1. Reads current state from INDEX.md
-2. Checks if blocker has been answered
-3. Continues the loop from where it paused
+This restarts the loop. If there was a blocker, the answer in `questions/` becomes part of the next prompt context.
+
+---
+
+## Why This Architecture?
+
+1. **Simple orchestrator** — Just a loop that restarts experts
+2. **Autonomous experts** — Each expert is self-contained and does its own state management
+3. **Auditable** — Every change is a git commit
+4. **Resumable** — State is in files, not memory
+
+Inspired by [DLP](https://github.com/edgarjs/dlp)'s "Ralph Wiggum Loop" pattern.
 
 ---
 

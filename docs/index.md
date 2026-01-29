@@ -46,6 +46,7 @@ Welcome to the NoodleCrew documentation. Choose your path:
 | -------- | ----------- |
 | [Project Structure](reference/project-structure.md) | Generated folder layout |
 | [Expert Format](reference/expert-format.md) | EXPERT.md specification with examples |
+| [State Files](reference/state-files.md) | INDEX.md, TODO.md, blockers, and termination |
 
 ---
 

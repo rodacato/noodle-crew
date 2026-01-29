@@ -562,4 +562,5 @@ feat(architecture): ADR-001 frontend stack (iteration 3)
 
 - [Configuration Guide](../guides/index.md) — `manifest.yml` options
 - [Expert Format](expert-format.md) — EXPERT.md specification
+- [State Files](state-files.md) — INDEX.md, TODO.md, and blocker lifecycle
 - [Architecture](../concepts/architecture.md) — How the execution loop works
