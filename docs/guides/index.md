@@ -10,7 +10,7 @@ All crew configuration lives in `.noodlecrew/`:
 
 ```text
 .noodlecrew/
-├── config.yml                    # Main configuration
+├── manifest.yml                    # Main configuration
 ├── CREW.md                       # Crew metadata
 ├── PHASES.md                     # Phases overview
 ├── experts/                      # Expert definitions
@@ -27,7 +27,7 @@ All crew configuration lives in `.noodlecrew/`:
 ## Quick Start Configuration
 
 ```yaml
-# .noodlecrew/config.yml
+# .noodlecrew/manifest.yml
 project:
   name: "my-project"
   type: "saas"

@@ -52,7 +52,7 @@ This creates:
 ```
 my-first-project/
 ├── .noodlecrew/              # Crew configuration
-│   ├── config.yml            # Main configuration
+│   ├── manifest.yml          # Crew manifest
 │   ├── CREW.md               # Crew overview
 │   ├── experts/              # Expert definitions
 │   └── phases/               # Phase definitions
@@ -118,7 +118,7 @@ You'll see output like:
 
 Phase: Discovery
 Expert: Product Owner
-Task: Generate PRD from idea-original.md
+Task: Generate PRD from IDEA.md
 
 [14:35:22] Building prompt context...
 [14:35:45] ✓ Response received (3,847 tokens)
@@ -206,7 +206,7 @@ The crew made reasonable decisions based on best practices. If you disagree, the
 ## Next Steps
 
 **Want to customize the crew?**
-- Edit `.noodlecrew.yml` to change experts, LLM settings, or phases
+- Edit `.noodlecrew/manifest.yml` to change experts, LLM settings, or phases
 - See [Configuration Guide](../guides/index.md)
 
 **Want to understand the decisions?**
@@ -237,7 +237,7 @@ Review the ADR. The rationale is documented. You can:
 
 **Crew got stuck in a loop?**
 
-Check the iteration limit in `.noodlecrew/config.yml`. Default is 100. If the crew isn't making progress, review logs with `ncrew logs`.
+Check the iteration limit in `.noodlecrew/manifest.yml`. Default is 100. If the crew isn't making progress, review logs with `ncrew logs`.
 
 ---
 

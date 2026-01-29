@@ -15,7 +15,7 @@ When you run `ncrew init <project-name>`, NoodleCrew creates a structured projec
 ├── TODO.md                           # Task tracking per phase
 │
 ├── .noodlecrew/                      # Crew configuration (hidden)
-│   ├── config.yml                    # Main configuration
+│   ├── manifest.yml                  # Crew manifest
 │   ├── CREW.md                       # Crew overview
 │   ├── PHASES.md                     # Phases overview
 │   ├── experts/                      # Self-contained expert units
@@ -73,7 +73,7 @@ When you run `ncrew init <project-name>`, NoodleCrew creates a structured projec
 
 ```text
 .noodlecrew/
-├── config.yml                        # Main configuration
+├── manifest.yml                      # Crew manifest
 ├── CREW.md                           # Crew overview and metadata
 ├── PHASES.md                         # Phases overview and flow
 ├── experts/                          # Self-contained expert units
@@ -85,9 +85,9 @@ When you run `ncrew init <project-name>`, NoodleCrew creates a structured projec
     └── discovery/PHASE.md
 ```
 
-### config.yml
+### manifest.yml
 
-**Purpose:** Main configuration — experts, LLM settings, phases, gates.
+**Purpose:** Crew manifest — declares experts, LLM settings, phases, gates.
 
 See [Configuration Schema](configuration-schema.md) for complete specification.
 
@@ -527,7 +527,7 @@ The structure follows these principles:
 | File/Directory | Created By | Modified By |
 | -------------- | ---------- | ----------- |
 | `.noodlecrew/` | `ncrew init` | User |
-| `.noodlecrew/config.yml` | `ncrew init` | User |
+| `.noodlecrew/manifest.yml` | `ncrew init` | User |
 | `.noodlecrew/experts/` | `ncrew init` | User |
 | `.noodlecrew/phases/` | `ncrew init` | User |
 | `.noodlecrew/logs/` | Crew | — |
@@ -560,7 +560,7 @@ feat(architecture): ADR-001 frontend stack (iteration 3)
 
 ## Further Reading
 
-- [Configuration Schema](configuration-schema.md) — `config.yml` specification
+- [Configuration Schema](configuration-schema.md) — `manifest.yml` specification
 - [INDEX.md Format](index-format.md) — State file specification
 - [TODO.md Format](todo-format.md) — Task file specification
 - [Blocker Format](blocker-format.md) — Question file specification

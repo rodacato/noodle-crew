@@ -153,7 +153,7 @@ All crew configuration lives in `.noodlecrew/`:
 
 ```text
 .noodlecrew/
-├── config.yml                        # Main configuration
+├── manifest.yml                      # Crew manifest
 ├── CREW.md                           # Crew overview and metadata
 ├── PHASES.md                         # Phases overview and flow
 ├── experts/                          # Expert definitions (self-contained)
@@ -178,7 +178,7 @@ All crew configuration lives in `.noodlecrew/`:
 
 Each expert is self-contained with its prompt (`EXPERT.md`) and its templates.
 
-Example `config.yml`:
+Example `manifest.yml`:
 
 ```yaml
 project:

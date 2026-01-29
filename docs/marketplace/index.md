@@ -52,7 +52,7 @@ ncrew run
 saas-b2b/
 ├── CREW.md                       # Crew overview
 ├── PHASES.md                     # Phase flow
-├── config.yml                    # Pre-configured settings
+├── manifest.yml                    # Pre-configured settings
 ├── experts/                      # Expert definitions
 │   ├── product-owner/
 │   │   ├── EXPERT.md
@@ -79,7 +79,7 @@ my-project/
 │   └── implementation/
 ├── questions/                    # Blockers needing input
 └── .noodlecrew/                  # Crew configuration
-    ├── config.yml
+    ├── manifest.yml
     ├── experts/
     ├── phases/
     └── logs/
@@ -94,7 +94,7 @@ Marketplace crews are starting points. Customize freely:
 ### Change LLM
 
 ```yaml
-# .noodlecrew/config.yml
+# .noodlecrew/manifest.yml
 crew:
   default_llm: gemini-2.5-flash
 ```
@@ -137,7 +137,7 @@ vim .noodlecrew/experts/product-owner/templates/prd.md
 ### Option A: Customize Your Project
 
 1. Start with any crew (default or marketplace)
-2. Edit `.noodlecrew/config.yml`
+2. Edit `.noodlecrew/manifest.yml`
 3. Edit `experts/*/EXPERT.md`
 4. Edit `experts/*/templates/*`
 
@@ -156,7 +156,7 @@ Required files:
 my-crew/
 ├── CREW.md                       # Required: manifest
 ├── PHASES.md                     # Required: flow overview
-├── config.yml                    # Required: configuration
+├── manifest.yml                    # Required: configuration
 ├── experts/
 │   └── product-owner/
 │       ├── EXPERT.md             # Required per expert
@@ -232,7 +232,7 @@ Use the templates in your `templates/` directory.
 
 Requirements:
 - Complete CREW.md with all sections
-- Working config.yml
+- Working manifest.yml
 - All experts with EXPERT.md and templates/
 - All phases with PHASE.md
 
@@ -246,7 +246,7 @@ ncrew marketplace list
 ```
 
 **LLM not available?**
-Install and authenticate the required CLI, or change LLM in `.noodlecrew/config.yml`.
+Install and authenticate the required CLI, or change LLM in `.noodlecrew/manifest.yml`.
 
 **Config conflict?**
 Existing config is backed up to `.noodlecrew.backup/`.

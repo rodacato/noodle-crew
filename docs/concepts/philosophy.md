@@ -119,7 +119,7 @@ This distinction is important:
 ├─────────────────────────────────────────────────────────────────────┤
 │                                                                     │
 │  Defines:                                                           │
-│  ├── Configuration schema (.noodlecrew/config.yml)                 │
+│  ├── Crew manifest (.noodlecrew/manifest.yml)                 │
 │  ├── Execution process (iteration loop)                            │
 │  ├── Supported LLMs (Claude, Gemini, etc.)                         │
 │  └── Extension points (experts/, phases/, templates/)              │
