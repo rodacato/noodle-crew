@@ -38,3 +38,27 @@ validation:
   # human_gates:
   #   - discovery      # Review PRD before architecture
   #   - architecture   # Review ADRs before implementation
+
+# Workflow configuration
+workflow:
+  # Task selection strategy
+  task_selection: first_unchecked  # first_unchecked | priority_weighted
+
+  # Commit settings
+  commit_format: "feat({{phase}}): {{task}}"
+  auto_commit: true
+
+  # Turn constraints
+  one_task_per_turn: true
+
+  # Context injection - what each expert receives
+  context:
+    - IDEA.md
+    - TODO.md
+    - INDEX.md
+    - previous_artifacts  # All docs/* from earlier phases
+    - WORKFLOW.md         # Execution instructions
+
+  # Output locations
+  output_dir: docs/{{phase}}/
+  questions_dir: questions/
