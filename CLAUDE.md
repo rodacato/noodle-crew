@@ -13,8 +13,10 @@ Phase: Manual PoC - designing the system before building it.
 | How it works | docs/concepts/architecture.md | Autonomous expert loop |
 | Expert definition | docs/reference/expert-format.md | EXPERT.md spec |
 | State files | docs/reference/state-files.md | INDEX.md, TODO.md, blockers |
+| CLI integration | docs/reference/cli-integration.md | One-shot with claude/gemini |
 | Configuration | docs/guides/index.md | manifest.yml options |
 | Project layout | docs/reference/project-structure.md | Generated folders |
+| Default crew | marketplace/default/ | Ready-to-use crew package |
 
 ## Key Architecture Decisions (Already Made)
 
@@ -63,3 +65,4 @@ These topics are settled - don't spend tokens re-investigating:
 - Termination mechanism (CREW_COMPLETE file)
 - Project structure (.noodlecrew/, docs/, questions/)
 - Phase flow (discovery → architecture → implementation)
+- CLI integration (claude -p, gemini --yolo)
