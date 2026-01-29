@@ -295,96 +295,50 @@ CHECK TERMINATION (after each iteration):
 
 ## Example: State Evolution
 
-### Iteration 1 (Discovery starts)
-
-**INDEX.md:**
+### Start (Iteration 1)
 
 ```yaml
----
+# INDEX.md
 status: in_progress
 current_phase: discovery
 current_iteration: 1
----
 ```
 
-**TODO.md:**
-
 ```markdown
+# TODO.md
 ## Discovery Phase 🔄 IN PROGRESS
-
 - [ ] Generate PRD
 - [ ] Define personas
 
 ## Architecture Phase ⏳ PENDING
-
 - [ ] ADR-001: Frontend
 ```
 
-### Iteration 2 (PRD done)
-
-**INDEX.md:**
+### End (All phases complete)
 
 ```yaml
-current_iteration: 2
+# INDEX.md
+status: complete
+current_phase: implementation
+current_iteration: 47
 ```
-
-**TODO.md:**
 
 ```markdown
-## Discovery Phase 🔄 IN PROGRESS
-
-- [x] Generate PRD
-- [ ] Define personas
-```
-
-**docs/discovery/prd.md:** Created
-
-### Iteration 3 (Discovery complete)
-
-**INDEX.md:**
-
-```yaml
-current_phase: architecture
-current_iteration: 3
-```
-
-**TODO.md:**
-
-```markdown
+# TODO.md
 ## Discovery Phase ✅ COMPLETE
-
-- [x] Generate PRD
-- [x] Define personas
-
-## Architecture Phase 🔄 IN PROGRESS
-
-- [ ] ADR-001: Frontend
-```
-
-If `human_gates: [discovery]` in manifest.yml → **PAUSE here for review**
-
-### Final Iteration (All done)
-
-**TODO.md:**
-
-```markdown
-## Discovery Phase ✅ COMPLETE
-
 - [x] Generate PRD
 - [x] Define personas
 
 ## Architecture Phase ✅ COMPLETE
-
 - [x] ADR-001: Frontend
 
 ## Implementation Phase ✅ COMPLETE
-
 - [x] Generate CHANGELOG
 ```
 
-**CREW_COMPLETE:** Created (empty file)
+**CREW_COMPLETE** file exists → Orchestrator exits with success.
 
-**Orchestrator:** Detects CREW_COMPLETE → EXIT (success)
+Note: If `human_gates: [discovery]` is configured, execution pauses after Discovery completes.
 
 ---
 

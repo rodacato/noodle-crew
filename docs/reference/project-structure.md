@@ -185,34 +185,9 @@ updated: "2026-01-28T14:52:33Z"
 
 **Created by:** `ncrew init`
 
-**Modified by:** Crew (automatically during execution)
+**Modified by:** Expert (marks tasks complete during execution)
 
-The format is documented below in this file.
-
-```markdown
----
-project: my-project
-updated: "2026-01-28T14:52:33Z"
----
-
-# TODO
-
-## Discovery Phase ✅ COMPLETE
-
-- [x] Generate PRD from idea
-- [x] Define user personas
-
-## Architecture Phase 🔄 IN PROGRESS
-
-- [x] ADR-001: Frontend stack
-- [ ] ADR-002: Database choice
-- [ ] ADR-003: Authentication
-
-## Implementation Phase ⏳ PENDING
-
-- [ ] Generate CHANGELOG
-- [ ] Document implementation steps
-```
+See [State Files](state-files.md#todomd) for complete format and phase status rules.
 
 ---
 
@@ -226,29 +201,19 @@ updated: "2026-01-28T14:52:33Z"
 
 **Modified by:** User
 
-**Example IDEA.md:**
+**Minimal structure:**
 
 ```markdown
-# My SaaS Idea
+# [Project Name]
 
 ## Problem
-
-Teams waste hours coordinating note-taking during meetings.
+[What pain point are you solving?]
 
 ## Solution
-
-A collaborative notes app with AI-powered summarization.
+[Your proposed approach]
 
 ## Users
-
-- Product teams (5-20 people)
-- Remote-first companies
-
-## MVP Scope
-
-- Real-time collaborative editing
-- Meeting summarization
-- Action item extraction
+[Who is this for?]
 ```
 
 ---
@@ -298,27 +263,7 @@ docs/
 | `vision.md` | Product vision statement | — |
 | `personas.md` | User personas | — |
 
-**PRD Structure:**
-
-```markdown
----
-type: prd
-status: complete
-created: "2026-01-28"
-expert: product-owner
-phase: discovery
----
-
-# Product Requirements: [Name]
-
-## Problem Statement
-## Solution
-## Success Metrics
-## User Personas
-## Scope (MVP)
-## Out of Scope
-## Risks & Mitigations
-```
+See [Expert Format](expert-format.md#complete-example-product-owner) for PRD structure and examples.
 
 ---
 
@@ -353,24 +298,7 @@ docs/architecture/
 | `architecture.md` | System architecture overview | — |
 | `tech-stack.md` | Technology choices summary | — |
 
-**ADR Structure:**
-
-```markdown
----
-number: "001"
-status: accepted
-date: "2026-01-28"
-decision-makers: [software-architect]
----
-
-# ADR-001: [Decision Title]
-
-## Context
-## Decision
-## Rationale
-## Consequences
-## Alternatives Considered
-```
+See [Expert Format](expert-format.md#complete-example-software-architect) for ADR structure and examples.
 
 ---
 
@@ -427,51 +355,11 @@ questions/
 └── developer-002-deployment.md   # Question about deployment
 ```
 
-**Created by:** Crew (when encountering critical blockers)
+**Created by:** Expert (when encountering critical blockers)
 
-**Resolved by:** User (answering in the file)
+**Resolved by:** User (answering in the file, then `ncrew resume`)
 
-The complete blocker format is documented below.
-
-**Blocker Structure:**
-
-```markdown
----
-from: software-architect
-to: user
-type: blocker
-status: pending
-created: "2026-01-28T14:52:33Z"
----
-
-# BLOCKER: [Decision Title]
-
-## Context
-[Why this decision is needed]
-
-## Question
-[The specific question]
-
-## Options
-### Option A: [Name]
-- Pros: ...
-- Cons: ...
-
-### Option B: [Name]
-- Pros: ...
-- Cons: ...
-
-## Recommendation
-[Architect's recommendation]
-
----
-
-## Your Answer (required to resume)
-
-**Decision**: _______________________
-**Reason**: _______________________
-**Date**: _______________________
-```
+See [State Files](state-files.md#questions-blockers) for blocker format and lifecycle.
 
 ---
 
