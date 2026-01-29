@@ -81,7 +81,7 @@ ncrew init my-saas-idea
 ncrew run
 ```
 
-[Full installation guide →](docs/getting-started/installation.md)
+[Quickstart guide →](docs/getting-started/quickstart.md)
 
 ---
 
@@ -143,7 +143,7 @@ Total Time: 47 minutes
 Git Commits: 127
 ```
 
-[See complete example →](docs/marketplace/catalog.md)
+[See complete example →](docs/marketplace/index.md)
 
 ---
 
@@ -210,7 +210,11 @@ validation:
     - architecture  # Pause for review after architecture phase
 ```
 
-**Prerequisites:** Claude Code CLI and/or Gemini CLI installed with active subscriptions.
+**Prerequisites:**
+- [Claude Code CLI](https://docs.anthropic.com/en/docs/claude-code) (`claude` command)
+- OR Gemini CLI with Vertex AI setup
+
+> **Note:** The `ncrew` CLI is not yet published. This documentation describes the intended design. See [DEVELOPMENT.md](DEVELOPMENT.md) for current status.
 
 [Full configuration reference →](docs/guides/index.md) | [Marketplace →](docs/marketplace/index.md)
 
@@ -261,12 +265,11 @@ Inspired by:
 
 | Section | Description |
 |---------|-------------|
-| [Getting Started](docs/getting-started/) | Installation, quickstart, first crew |
-| [Concepts](docs/concepts/) | Philosophy, architecture, glossary |
-| [Guides](docs/guides/) | Configuration, experts, phases, templates |
-| [CLI Reference](docs/cli/) | Command documentation |
-| [Marketplace](docs/marketplace/) | Using and creating crews |
-| [Reference](docs/reference/) | Technical specifications |
+| [Getting Started](docs/getting-started/quickstart.md) | Quickstart tutorial |
+| [Concepts](docs/concepts/) | Philosophy, architecture |
+| [Guides](docs/guides/index.md) | Configuration, experts, phases |
+| [Marketplace](docs/marketplace/index.md) | Using and creating crews |
+| [Reference](docs/reference/project-structure.md) | Technical specifications |
 
 ---
 

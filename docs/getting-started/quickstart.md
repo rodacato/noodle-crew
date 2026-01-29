@@ -211,14 +211,14 @@ The crew made reasonable decisions based on best practices. If you disagree, the
 
 **Want to understand the decisions?**
 - Read the generated ADRs in `docs/architecture/adrs/`
-- See [Understanding Phases](../guides/phases.md)
+- See [Configuration Guide](../guides/index.md)
 
 **Want to use a pre-configured crew?**
-- Browse the [Marketplace](../marketplace/catalog.md)
+- Browse the [Marketplace](../marketplace/index.md)
 - Install with `ncrew init my-project --crew saas-b2b`
 
-**Want a complete walkthrough?**
-- See [Your First Crew](your-first-crew.md) for detailed explanations
+**Want to understand the architecture?**
+- See [Architecture](../concepts/architecture.md) for how the execution loop works
 
 ---
 

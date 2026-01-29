@@ -267,7 +267,7 @@ The noodle theme is consistent but not forced. Playful without being cringe.
 
 ## Further Reading
 
-- [Architecture](architecture.md) — System design and components
-- [Glossary](glossary.md) — Key terms defined
-- [Anti-Patterns](../guides/anti-patterns.md) — Common mistakes to avoid
+- [Architecture](architecture.md) — How the execution loop works
+- [Project Structure](../reference/project-structure.md) — Generated folder layout
+- [Expert Format](../reference/expert-format.md) — How to define experts
 - [DLP Repository](https://github.com/edgarjs/dlp) — Original inspiration

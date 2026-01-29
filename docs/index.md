@@ -26,6 +26,7 @@ Welcome to the NoodleCrew documentation. Choose your path:
 | Document | Description |
 | -------- | ----------- |
 | [Philosophy](concepts/philosophy.md) | Why NoodleCrew exists and its core principles |
+| [Architecture](concepts/architecture.md) | How the execution loop works internally |
 
 ### Guides
 
@@ -44,6 +45,7 @@ Welcome to the NoodleCrew documentation. Choose your path:
 | Document | Description |
 | -------- | ----------- |
 | [Project Structure](reference/project-structure.md) | Generated folder layout |
+| [Expert Format](reference/expert-format.md) | EXPERT.md specification with examples |
 
 ---
 

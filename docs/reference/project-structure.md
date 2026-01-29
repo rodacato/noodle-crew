@@ -89,7 +89,7 @@ When you run `ncrew init <project-name>`, NoodleCrew creates a structured projec
 
 **Purpose:** Crew manifest — declares experts, LLM settings, phases, gates.
 
-See [Configuration Schema](configuration-schema.md) for complete specification.
+See [Configuration Guide](../guides/index.md) for all options.
 
 ```yaml
 project:
@@ -151,7 +151,7 @@ Description of what this crew does.
 
 **Modified by:** Crew (automatically during execution)
 
-See [INDEX.md Format](index-format.md) for complete specification.
+**Example:**
 
 ```markdown
 ---
@@ -187,7 +187,7 @@ updated: "2026-01-28T14:52:33Z"
 
 **Modified by:** Crew (automatically during execution)
 
-See [TODO.md Format](todo-format.md) for complete specification.
+The format is documented below in this file.
 
 ```markdown
 ---
@@ -431,7 +431,7 @@ questions/
 
 **Resolved by:** User (answering in the file)
 
-See [Blocker Format](blocker-format.md) for complete specification.
+The complete blocker format is documented below.
 
 **Blocker Structure:**
 
@@ -560,7 +560,6 @@ feat(architecture): ADR-001 frontend stack (iteration 3)
 
 ## Further Reading
 
-- [Configuration Schema](configuration-schema.md) — `manifest.yml` specification
-- [INDEX.md Format](index-format.md) — State file specification
-- [TODO.md Format](todo-format.md) — Task file specification
-- [Blocker Format](blocker-format.md) — Question file specification
+- [Configuration Guide](../guides/index.md) — `manifest.yml` options
+- [Expert Format](expert-format.md) — EXPERT.md specification
+- [Architecture](../concepts/architecture.md) — How the execution loop works
