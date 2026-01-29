@@ -8,52 +8,91 @@
 
 When you run `ncrew init <project-name>`, NoodleCrew creates a structured project folder designed for autonomous execution and human auditability.
 
-```
+```text
 <project-name>/
-├── .noodlecrew.yml              # Crew configuration
-├── INDEX.md                      # Project state (master document)
-├── TODO.md                       # Task tracking per phase
+├── INDEX.md                          # Project state (master document)
+├── TODO.md                           # Task tracking per phase
 │
-├── 00-input/                     # Your input
-│   └── idea-original.md          # The original idea
+├── .noodlecrew/                      # Crew configuration (all in one place)
+│   ├── config.yml                    # Main configuration
+│   ├── CREW.md                       # Crew overview
+│   ├── PHASES.md                     # Phases overview
+│   ├── experts/                      # Self-contained expert units
+│   │   ├── product-owner/
+│   │   │   ├── EXPERT.md
+│   │   │   └── templates/
+│   │   │       └── prd.md
+│   │   ├── software-architect/
+│   │   │   ├── EXPERT.md
+│   │   │   └── templates/
+│   │   │       └── adr.md
+│   │   └── developer/
+│   │       ├── EXPERT.md
+│   │       └── templates/
+│   │           └── changelog.md
+│   └── phases/                       # Phase definitions
+│       ├── discovery/PHASE.md
+│       ├── architecture/PHASE.md
+│       └── implementation/PHASE.md
 │
-├── 01-discovery/                 # Product Owner outputs
-│   ├── prd.md                    # Product Requirements Document
-│   ├── vision.md                 # Product vision statement
-│   └── personas.md               # User personas
+├── 00-input/                         # Your input
+│   └── idea-original.md              # The original idea
 │
-├── 04-architecture/              # Software Architect outputs
-│   ├── adrs/                     # Architecture Decision Records
+├── 01-discovery/                     # Product Owner outputs
+│   ├── prd.md                        # Product Requirements Document
+│   ├── vision.md                     # Product vision statement
+│   └── personas.md                   # User personas
+│
+├── 04-architecture/                  # Software Architect outputs
+│   ├── adrs/                         # Architecture Decision Records
 │   │   ├── 001-frontend.md
 │   │   ├── 002-database.md
 │   │   └── ...
-│   ├── architecture.md           # Architecture overview
-│   └── tech-stack.md             # Technology choices summary
+│   ├── architecture.md               # Architecture overview
+│   └── tech-stack.md                 # Technology choices summary
 │
-├── 05-implementation/            # Developer outputs
-│   ├── CHANGELOG.md              # Version history
-│   ├── implementation-notes.md   # Implementation guidance
-│   └── code-snippets/            # Optional code examples
+├── 05-implementation/                # Developer outputs
+│   ├── CHANGELOG.md                  # Version history
+│   ├── implementation-notes.md       # Implementation guidance
+│   └── code-snippets/                # Optional code examples
 │
-├── questions/                    # Blocker questions
-│   └── to-user/                  # Questions requiring human input
+├── questions/                        # Blocker questions
+│   └── to-user/                      # Questions requiring human input
 │       └── architect-001.md
 │
-└── logs/                         # Execution logs
+└── logs/                             # Execution logs
     └── 20260128-143522.log
 ```
 
 ---
 
-## Root Files
+## Crew Configuration Directory
 
-### .noodlecrew.yml
+### .noodlecrew/
 
-**Purpose:** Crew configuration — experts, LLM settings, phases, gates.
+**Purpose:** All crew configuration lives here — config, experts, phases, templates.
 
 **Created by:** `ncrew init`
 
 **Modified by:** User (manual editing)
+
+```text
+.noodlecrew/
+├── config.yml                        # Main configuration
+├── CREW.md                           # Crew overview and metadata
+├── PHASES.md                         # Phases overview and flow
+├── experts/                          # Self-contained expert units
+│   └── product-owner/
+│       ├── EXPERT.md                 # How this expert thinks
+│       └── templates/                # What this expert produces
+│           └── prd.md
+└── phases/                           # Phase definitions
+    └── discovery/PHASE.md
+```
+
+### config.yml
+
+**Purpose:** Main configuration — experts, LLM settings, phases, gates.
 
 See [Configuration Schema](configuration-schema.md) for complete specification.
 
@@ -63,15 +102,11 @@ project:
   type: "saas"
 
 crew:
+  default_llm: claude
   experts:
-    - product-owner
-    - software-architect
-    - developer
-  llm:
-    provider: "claude"
-    model: "claude-sonnet-4-5"
-    max_iterations: 100
-    max_cost: 30.00
+    - role: product-owner
+    - role: software-architect
+    - role: developer
 
 phases:
   - discovery
@@ -81,6 +116,36 @@ phases:
 validation:
   human_gates:
     - architecture
+```
+
+### CREW.md
+
+**Purpose:** Crew overview and metadata.
+
+```markdown
+---
+name: My Crew
+version: 1.0.0
+author: "@username"
+---
+
+# My Crew
+
+Description of what this crew does.
+```
+
+### PHASES.md
+
+**Purpose:** Phases overview and execution flow.
+
+```markdown
+# Phases
+
+## Flow
+
+1. **Discovery** — Product Owner creates PRD
+2. **Architecture** — Architect makes technical decisions
+3. **Implementation** — Developer creates specs
 ```
 
 ### INDEX.md
@@ -448,7 +513,10 @@ Gaps (02, 03, 06, 07) are reserved for future phases.
 
 | File/Directory | Created By | Modified By |
 | -------------- | ---------- | ----------- |
-| `.noodlecrew.yml` | `ncrew init` | User |
+| `.noodlecrew/` | `ncrew init` | User |
+| `.noodlecrew/config.yml` | `ncrew init` | User |
+| `.noodlecrew/experts/` | `ncrew init` | User |
+| `.noodlecrew/phases/` | `ncrew init` | User |
 | `INDEX.md` | `ncrew init` | Crew |
 | `TODO.md` | `ncrew init` | Crew |
 | `00-input/*` | `ncrew init` | User |
@@ -479,7 +547,7 @@ feat(architecture): ADR-001 frontend stack (iteration 3)
 
 ## Further Reading
 
-- [Configuration Schema](configuration-schema.md) — `.noodlecrew.yml` specification
+- [Configuration Schema](configuration-schema.md) — `config.yml` specification
 - [INDEX.md Format](index-format.md) — State file specification
 - [TODO.md Format](todo-format.md) — Task file specification
 - [Blocker Format](blocker-format.md) — Question file specification

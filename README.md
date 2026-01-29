@@ -149,7 +149,36 @@ Git Commits: 127
 
 ## Configuration
 
-Create `.noodlecrew.yml` in your project:
+All crew configuration lives in `.noodlecrew/`:
+
+```text
+.noodlecrew/
+├── config.yml                        # Main configuration
+├── CREW.md                           # Crew overview and metadata
+├── PHASES.md                         # Phases overview and flow
+├── experts/                          # Expert definitions (self-contained)
+│   ├── product-owner/
+│   │   ├── EXPERT.md                 # How this expert thinks
+│   │   └── templates/                # What this expert produces
+│   │       ├── prd.md
+│   │       └── personas.md
+│   ├── software-architect/
+│   │   ├── EXPERT.md
+│   │   └── templates/
+│   │       └── adr.md
+│   └── developer/
+│       ├── EXPERT.md
+│       └── templates/
+│           └── changelog.md
+└── phases/                           # Phase definitions
+    ├── discovery/PHASE.md
+    ├── architecture/PHASE.md
+    └── implementation/PHASE.md
+```
+
+Each expert is self-contained with its prompt (`EXPERT.md`) and its templates.
+
+Example `config.yml`:
 
 ```yaml
 project:
@@ -171,14 +200,10 @@ crew:
     - role: developer
       llm: claude-opus-4.5     # Best for complex implementation
 
-    - role: qa-engineer
-      llm: gemini-2.5-flash
-
 phases:
   - discovery
   - architecture
   - implementation
-  - testing
 
 validation:
   human_gates:
@@ -186,14 +211,6 @@ validation:
 ```
 
 **Prerequisites:** Claude Code CLI and/or Gemini CLI installed with active subscriptions.
-
-**Customization:** Beyond the YAML, customize expert behavior via prompts and artifact formats via templates in `.noodlecrew/`:
-
-```text
-.noodlecrew/
-├── prompts/      # How experts think
-└── templates/    # What gets produced
-```
 
 [Full configuration reference →](docs/guides/configuration.md) | [Creating custom crews →](docs/marketplace/creating-crews.md)
 

@@ -119,16 +119,16 @@ This distinction is important:
 ├─────────────────────────────────────────────────────────────────────┤
 │                                                                     │
 │  Defines:                                                           │
-│  ├── Configuration schema (.noodlecrew.yml)                        │
-│  ├── Execution process (phases, iteration loop)                    │
+│  ├── Configuration schema (.noodlecrew/config.yml)                 │
+│  ├── Execution process (iteration loop)                            │
 │  ├── Supported LLMs (Claude, Gemini, etc.)                         │
-│  └── Extension points (prompts/, templates/)                       │
+│  └── Extension points (experts/, phases/, templates/)              │
 │                                                                     │
 │  Does NOT define:                                                   │
-│  ├── Which experts to use          → You decide                    │
-│  ├── Which phases to run           → You decide                    │
-│  ├── What prompts say              → You decide                    │
-│  └── What templates produce        → You decide                    │
+│  ├── Which experts to use (EXPERT.md)   → You decide               │
+│  ├── Which phases to run (PHASE.md)     → You decide               │
+│  ├── What templates produce (TEMPLATE.md) → You decide             │
+│  └── How they all work together         → You decide               │
 │                                                                     │
 └─────────────────────────────────────────────────────────────────────┘
                               │
@@ -156,11 +156,10 @@ The **default crew** (3 experts, Claude, standard phases) is just an example. Yo
 
 | Attribute | Default Crew | You Can... |
 | --------- | ------------ | ---------- |
-| `experts` | 3 (PO, Architect, Dev) | Add 20 custom experts |
-| `phases` | 3 (discovery, arch, impl) | Create `ideation`, `validation`, `launch` |
-| `default_llm` | claude | Use gemini, or mix both |
-| `prompts/` | Generic | Specialize for your domain |
-| `templates/` | Standard | Match your company's format |
+| `experts/` | 3 (PO, Architect, Dev) | Add 20 custom experts via EXPERT.md |
+| `phases/` | 3 (discovery, arch, impl) | Create PHASE.md for `ideation`, `validation`, `launch` |
+| `templates/` | Standard formats | Match your company's format via TEMPLATE.md |
+| `default_llm` | claude | Use gemini, or mix both per expert |
 
 **The only limits are what the framework supports, not what the default crew uses.**
 

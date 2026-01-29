@@ -84,19 +84,25 @@ cd my-saas
 
 This creates:
 
-```
+```text
 my-saas/
-├── .noodlecrew.yml              # Pre-configured for SaaS B2B
-├── INDEX.md                      # Project state
-├── TODO.md                       # Task tracking
+├── INDEX.md                          # Project state
+├── TODO.md                           # Task tracking
 ├── 00-input/
-│   └── idea-original.md          # Write your idea here
-├── 01-discovery/                 # PRD will go here
-├── 04-architecture/              # ADRs will go here
-├── 05-implementation/            # Specs will go here
-└── .noodlecrew/
-    ├── prompts/                  # Crew prompts
-    └── templates/                # Crew templates
+│   └── idea-original.md              # Write your idea here
+├── 01-discovery/                     # PRD will go here
+├── 04-architecture/                  # ADRs will go here
+├── 05-implementation/                # Specs will go here
+└── .noodlecrew/                      # All crew config here
+    ├── config.yml                    # Pre-configured for SaaS B2B
+    ├── CREW.md                       # Crew overview
+    ├── PHASES.md                     # Phases overview
+    ├── experts/                      # Crew experts
+    │   └── product-owner/
+    │       ├── EXPERT.md
+    │       └── templates/
+    └── phases/                       # Crew phases
+        └── discovery/PHASE.md
 ```
 
 ### Existing Project
@@ -109,9 +115,9 @@ ncrew marketplace install fintech-app
 ```
 
 This will:
-1. Back up existing `.noodlecrew.yml` (if any)
-2. Copy the crew's configuration
-3. Copy prompts and templates to `.noodlecrew/`
+
+1. Back up existing `.noodlecrew/` directory (if any)
+2. Copy the crew's configuration, experts, and phases
 
 ---
 
@@ -128,7 +134,8 @@ ncrew run
 ```
 
 The crew executes according to its configuration:
-- Uses the experts defined in `.noodlecrew.yml`
+
+- Uses the experts defined in `.noodlecrew/config.yml`
 - Follows the phase order specified
 - Applies LLM assignments per expert
 
@@ -141,7 +148,7 @@ Marketplace crews have default LLM settings. To change:
 ### Option 1: Edit Configuration
 
 ```yaml
-# .noodlecrew.yml
+# .noodlecrew/config.yml
 crew:
   default_llm: gemini-2.5-flash    # Change from claude to gemini
 ```
@@ -155,6 +162,7 @@ NOODLECREW_DEFAULT_LLM=gemini-2.5-flash ncrew run
 ### Option 3: Per-Expert Override
 
 ```yaml
+# .noodlecrew/config.yml
 crew:
   default_llm: gemini-2.5-flash    # Fast default
   experts:
@@ -171,7 +179,7 @@ Marketplace crews are starting points. Customize freely:
 ### Add an Expert
 
 ```yaml
-# .noodlecrew.yml
+# .noodlecrew/config.yml
 crew:
   experts:
     - role: product-owner
@@ -181,10 +189,17 @@ crew:
       only: [testing, review]
 ```
 
+Then create the expert directory:
+
+```bash
+mkdir -p .noodlecrew/experts/qa-engineer/templates
+vim .noodlecrew/experts/qa-engineer/EXPERT.md
+```
+
 ### Remove a Phase
 
 ```yaml
-# .noodlecrew.yml
+# .noodlecrew/config.yml
 phases:
   - discovery
   - architecture
@@ -192,16 +207,16 @@ phases:
   # Removed: testing, review
 ```
 
-### Modify a Prompt
+### Modify an Expert Prompt
 
 ```bash
-vim .noodlecrew/prompts/product-owner.md
+vim .noodlecrew/experts/product-owner/EXPERT.md
 ```
 
 ### Change a Template
 
 ```bash
-vim .noodlecrew/templates/prd-template.md
+vim .noodlecrew/experts/product-owner/templates/prd.md
 ```
 
 See [Creating Crews](creating-crews.md) for detailed customization guide.
@@ -219,7 +234,7 @@ ncrew init prototype --crew default
 cd prototype
 
 # Switch to fast LLM
-vim .noodlecrew.yml
+vim .noodlecrew/config.yml
 # Set: default_llm: gemini-2.5-flash
 
 ncrew run
@@ -234,7 +249,7 @@ ncrew init enterprise-app --crew saas-b2b
 cd enterprise-app
 
 # Add performance reviewer
-vim .noodlecrew.yml
+vim .noodlecrew/config.yml
 # Add to experts:
 #   - role: performance-reviewer
 #     only: [architecture, review]
@@ -265,13 +280,14 @@ If you want to switch to a different crew:
 ncrew marketplace install fintech-app
 
 # Your old config is saved as:
-# .noodlecrew.yml.backup
+# .noodlecrew.backup/
 ```
 
 To restore:
 
 ```bash
-mv .noodlecrew.yml.backup .noodlecrew.yml
+rm -rf .noodlecrew
+mv .noodlecrew.backup .noodlecrew
 ```
 
 ---
@@ -308,17 +324,19 @@ Error: LLM 'claude-opus-4.5' not configured
 ```
 
 Either:
+
 1. Install and authenticate the required CLI
-2. Change to an available LLM in `.noodlecrew.yml`
+2. Change to an available LLM in `.noodlecrew/config.yml`
 
 ### Config Conflict
 
 ```
-Warning: .noodlecrew.yml already exists
+Warning: .noodlecrew/ already exists
 ```
 
 Options:
-1. Continue (backs up existing)
+
+1. Continue (backs up existing to `.noodlecrew.backup/`)
 2. Cancel and manually merge
 
 ---

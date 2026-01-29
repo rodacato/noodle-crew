@@ -102,30 +102,50 @@ See [Catalog](catalog.md) for detailed descriptions.
 
 A marketplace crew is a package containing:
 
-```
+```text
 saas-b2b/
-├── CREW.md                      # Description and metadata
-├── .noodlecrew.yml              # Pre-configured settings
-├── prompts/                     # Expert prompts
-│   ├── product-owner.md
-│   ├── software-architect.md
-│   ├── developer.md
-│   └── security-reviewer.md     # Additional experts
-└── templates/                   # Artifact templates
-    ├── prd-template.md
-    ├── adr-template.md
-    └── changelog-template.md
+├── CREW.md                           # Crew overview and metadata
+├── PHASES.md                         # Phases overview and flow
+├── config.yml                        # Pre-configured settings
+├── experts/                          # Self-contained expert units
+│   ├── product-owner/
+│   │   ├── EXPERT.md
+│   │   └── templates/
+│   │       └── prd.md
+│   ├── software-architect/
+│   │   ├── EXPERT.md
+│   │   └── templates/
+│   │       └── adr.md
+│   ├── developer/
+│   │   ├── EXPERT.md
+│   │   └── templates/
+│   │       └── changelog.md
+│   └── security-reviewer/            # Additional expert
+│       ├── EXPERT.md
+│       └── templates/
+│           └── security-adr.md
+└── phases/                           # Phase definitions
+    ├── discovery/PHASE.md
+    ├── architecture/PHASE.md
+    └── implementation/PHASE.md
 ```
 
-When installed, this becomes your project's configuration:
+When installed, this becomes your project's `.noodlecrew/` directory:
 
-```
+```text
 my-project/
-├── .noodlecrew.yml              # Your crew config
 └── .noodlecrew/
-    ├── prompts/                 # Your prompts (editable)
-    └── templates/               # Your templates (editable)
+    ├── CREW.md                       # Crew overview
+    ├── PHASES.md                     # Phases overview
+    ├── config.yml                    # Your config (editable)
+    ├── experts/                      # Your experts (editable)
+    │   └── product-owner/
+    │       ├── EXPERT.md
+    │       └── templates/
+    └── phases/                       # Your phases (editable)
 ```
+
+Each expert is self-contained with its prompt and templates.
 
 ---
 
@@ -133,10 +153,10 @@ my-project/
 
 Marketplace crews are starting points, not constraints. After installing:
 
-1. **Change LLM** — Edit `default_llm` in `.noodlecrew.yml`
-2. **Add/remove experts** — Edit `experts` list in config
-3. **Modify prompts** — Edit files in `.noodlecrew/prompts/`
-4. **Adjust templates** — Edit files in `.noodlecrew/templates/`
+1. **Change LLM** — Edit `default_llm` in `.noodlecrew/config.yml`
+2. **Add/remove experts** — Create or remove `experts/name/EXPERT.md`
+3. **Modify phases** — Edit `phases/name/PHASE.md`
+4. **Adjust templates** — Edit `templates/name/TEMPLATE.md`
 
 See [Creating Crews](creating-crews.md) for detailed customization guide.
 

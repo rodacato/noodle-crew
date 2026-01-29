@@ -373,25 +373,28 @@ NoodleCrew uses your existing CLI subscriptions:
 
 ## Creating Custom Experts
 
-You can define custom experts by creating prompt files:
+You can define custom experts by creating an expert directory:
 
-```
-prompts/
-├── product-owner.md      # Built-in
-├── software-architect.md # Built-in
-├── developer.md          # Built-in
-└── my-custom-expert.md   # Your custom expert
+```text
+.noodlecrew/
+└── experts/
+    ├── product-owner/EXPERT.md       # Built-in
+    ├── software-architect/EXPERT.md  # Built-in
+    ├── developer/EXPERT.md           # Built-in
+    └── my-custom-expert/EXPERT.md    # Your custom expert
 ```
 
 Then reference in configuration:
 
 ```yaml
+# .noodlecrew/config.yml
 crew:
   experts:
     - role: my-custom-expert
-      prompt: prompts/my-custom-expert.md
       llm: claude
 ```
+
+The role name must match the directory name in `experts/`.
 
 See [Creating Custom Experts](../advanced/custom-experts.md) for details.
 

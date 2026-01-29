@@ -1,12 +1,41 @@
 # Configuration Guide
 
-> Complete reference for `.noodlecrew.yml` configuration.
+> Complete reference for `.noodlecrew/config.yml` configuration.
 
 ---
 
 ## Overview
 
-NoodleCrew is configured via `.noodlecrew.yml` in your project root. This file defines:
+NoodleCrew is configured via the `.noodlecrew/` directory in your project root:
+
+```text
+.noodlecrew/
+├── config.yml                        # Main configuration
+├── CREW.md                           # Crew overview and metadata
+├── PHASES.md                         # Phases overview and flow
+├── experts/                          # Expert definitions (self-contained)
+│   ├── product-owner/
+│   │   ├── EXPERT.md                 # How this expert thinks
+│   │   └── templates/                # What this expert produces
+│   │       ├── prd.md
+│   │       └── personas.md
+│   ├── software-architect/
+│   │   ├── EXPERT.md
+│   │   └── templates/
+│   │       └── adr.md
+│   └── developer/
+│       ├── EXPERT.md
+│       └── templates/
+│           └── changelog.md
+└── phases/                           # Phase definitions
+    ├── discovery/PHASE.md
+    ├── architecture/PHASE.md
+    └── implementation/PHASE.md
+```
+
+Each expert is self-contained with its prompt (`EXPERT.md`) and its templates.
+
+The `config.yml` file defines:
 
 - Project metadata
 - Which experts to use
@@ -19,6 +48,7 @@ NoodleCrew is configured via `.noodlecrew.yml` in your project root. This file d
 ## Minimal Configuration
 
 ```yaml
+# .noodlecrew/config.yml
 project:
   name: "my-project"
 
@@ -339,39 +369,105 @@ crew:
 
 ---
 
-## Beyond the YAML
+## Directory Structure
 
-The `.noodlecrew.yml` defines **who** does **what**. But your crew configuration also includes:
+Everything lives in `.noodlecrew/`:
 
 ```text
 my-project/
-├── .noodlecrew.yml              # WHO does WHAT (this file)
 └── .noodlecrew/
-    ├── prompts/                 # HOW experts think
-    │   ├── product-owner.md
-    │   ├── software-architect.md
-    │   └── developer.md
-    └── templates/               # WHAT gets produced
-        ├── prd-template.md
-        ├── adr-template.md
-        └── changelog-template.md
+    ├── config.yml                        # WHO does WHAT
+    ├── CREW.md                           # Crew overview and metadata
+    ├── PHASES.md                         # Phases overview and flow
+    ├── experts/                          # Self-contained expert units
+    │   ├── product-owner/
+    │   │   ├── EXPERT.md                 # How this expert thinks
+    │   │   └── templates/                # What this expert produces
+    │   │       ├── prd.md
+    │   │       └── personas.md
+    │   ├── software-architect/
+    │   │   ├── EXPERT.md
+    │   │   └── templates/
+    │   │       └── adr.md
+    │   └── developer/
+    │       ├── EXPERT.md
+    │       └── templates/
+    │           └── changelog.md
+    └── phases/                           # Phase definitions
+        ├── discovery/PHASE.md
+        ├── architecture/PHASE.md
+        └── implementation/PHASE.md
 ```
 
-### Prompts
+Each expert is self-contained with its prompt and templates.
 
-Expert prompts define their behavior, personality, and domain knowledge. Edit these to:
+### CREW.md
+
+The crew manifest contains metadata about your crew:
+
+```markdown
+---
+name: My Custom Crew
+version: 1.0.0
+author: "@myhandle"
+tags: [saas, b2b]
+---
+
+# My Custom Crew
+
+Description of what this crew does and when to use it.
+```
+
+### PHASES.md
+
+The phases overview describes the execution flow:
+
+```markdown
+# Phases
+
+## Overview
+
+This crew uses 3 phases: Discovery → Architecture → Implementation.
+
+## Flow
+
+1. **Discovery** — Product Owner validates idea and creates PRD
+2. **Architecture** — Architect makes technical decisions, documents ADRs
+3. **Implementation** — Developer creates specs and CHANGELOG
+
+## Human Gates
+
+- After Architecture: Review ADRs before implementation
+```
+
+### Experts (EXPERT.md + templates/)
+
+Each expert directory contains:
+
+- **EXPERT.md** — Defines behavior, personality, and domain knowledge
+- **templates/** — Templates for artifacts this expert produces
+
+Edit EXPERT.md to:
 
 - Focus experts on your specific domain
 - Add company-specific guidelines
 - Change output style or format
 
-### Templates
-
-Templates define the structure of generated artifacts. Edit these to:
+Edit templates to:
 
 - Match your company's documentation format
 - Add required sections (compliance, security)
 - Remove sections you don't need
+
+### Phases (PHASE.md)
+
+Each phase directory contains a PHASE.md that defines:
+
+- Description and purpose
+- Entry criteria (what must exist before starting)
+- Exit criteria (what must be produced)
+- Default participating experts
+- Validation rules
 
 See [Creating Crews](../marketplace/creating-crews.md) for detailed customization guide.
 

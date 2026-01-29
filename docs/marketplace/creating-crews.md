@@ -17,21 +17,32 @@ Both use the same structure. The difference is where the files live.
 
 ## Understanding the Structure
 
-Your crew configuration consists of three parts:
+Your crew configuration lives entirely in `.noodlecrew/`:
 
-```
+```text
 my-project/
-├── .noodlecrew.yml              # WHO does WHAT (experts, phases, LLMs)
 └── .noodlecrew/
-    ├── prompts/                 # HOW experts think (system prompts)
-    └── templates/               # WHAT gets produced (artifact formats)
+    ├── config.yml                    # WHO does WHAT (experts, phases, LLMs)
+    ├── CREW.md                       # Crew manifest and metadata
+    ├── experts/                      # Self-contained expert units
+    │   ├── product-owner/
+    │   │   ├── EXPERT.md             # HOW this expert thinks
+    │   │   └── templates/            # WHAT this expert produces
+    │   │       └── prd.md
+    │   └── software-architect/
+    │       ├── EXPERT.md
+    │       └── templates/
+    │           └── adr.md
+    └── phases/                       # Phase definitions
+        └── discovery/PHASE.md
 ```
 
 | Component | Purpose | Example Change |
-|-----------|---------|----------------|
-| `.noodlecrew.yml` | Experts, phases, LLM assignments | Add security reviewer, change to Gemini |
-| `prompts/` | Expert behavior and personality | Make PO focus on enterprise compliance |
-| `templates/` | Artifact structure and sections | Add "Compliance" section to PRD |
+| --------- | ------- | -------------- |
+| `config.yml` | Experts, phases, LLM assignments | Add security reviewer, change to Gemini |
+| `experts/*/EXPERT.md` | Expert behavior and personality | Make PO focus on enterprise compliance |
+| `experts/*/templates/` | Artifact structure and sections | Add "Compliance" section to PRD |
+| `phases/*/PHASE.md` | Phase criteria and flow | Add "validation" phase with custom gates |
 
 ---
 
@@ -41,7 +52,7 @@ Start with any crew (default or marketplace), then modify.
 
 ### Step 1: Change Configuration
 
-Edit `.noodlecrew.yml`:
+Edit `.noodlecrew/config.yml`:
 
 ```yaml
 # Original (default crew)
@@ -64,19 +75,19 @@ crew:
       only: [architecture, review]
 ```
 
-### Step 2: Customize Prompts
+### Step 2: Customize Expert Prompts
 
-Edit prompts in `.noodlecrew/prompts/`:
+Edit the EXPERT.md in each expert's directory:
 
 ```bash
 # View current prompt
-cat .noodlecrew/prompts/product-owner.md
+cat .noodlecrew/experts/product-owner/EXPERT.md
 
 # Edit to customize
-vim .noodlecrew/prompts/product-owner.md
+vim .noodlecrew/experts/product-owner/EXPERT.md
 ```
 
-Prompt structure:
+EXPERT.md structure:
 
 ```markdown
 # Product Owner
@@ -103,10 +114,10 @@ You are a Product Owner specialized in [YOUR DOMAIN].
 
 ### Step 3: Customize Templates
 
-Edit templates in `.noodlecrew/templates/`:
+Edit templates in each expert's `templates/` directory:
 
 ```bash
-vim .noodlecrew/templates/prd-template.md
+vim .noodlecrew/experts/product-owner/templates/prd.md
 ```
 
 Add sections relevant to your domain:
@@ -136,13 +147,18 @@ Add sections relevant to your domain:
 
 Package your customizations for others to use.
 
-### Step 1: Create Crew Directory
+### Step 1: Create Crew Directory Structure
 
 ```bash
-mkdir -p my-crew/{prompts,templates}
+mkdir -p my-crew/experts/product-owner/templates
+mkdir -p my-crew/experts/software-architect/templates
+mkdir -p my-crew/experts/developer/templates
+mkdir -p my-crew/phases/discovery
+mkdir -p my-crew/phases/architecture
+mkdir -p my-crew/phases/implementation
 ```
 
-### Step 2: Create CREW.md (Manifest)
+### Step 2: Create CREW.md (Overview)
 
 ```markdown
 ---
@@ -164,7 +180,7 @@ Describe the use case and what makes this crew special.
 ## Experts Included
 
 | Expert | LLM Override | Phase Participation |
-|--------|--------------|---------------------|
+| ------ | ------------ | ------------------- |
 | product-owner | - | discovery |
 | software-architect | - | architecture |
 | developer | - | implementation |
@@ -172,6 +188,7 @@ Describe the use case and what makes this crew special.
 ## Pre-configured Decisions
 
 List any opinionated defaults:
+
 - Database recommendation
 - Auth approach
 - Deployment targets
@@ -189,9 +206,29 @@ ncrew init my-project --crew my-custom-crew
 \`\`\`
 ```
 
-### Step 3: Add Configuration
+### Step 3: Create PHASES.md (Flow Overview)
 
-Create `.noodlecrew.yml` with your settings:
+```markdown
+# Phases
+
+## Overview
+
+This crew uses 3 phases: Discovery → Architecture → Implementation.
+
+## Flow
+
+1. **Discovery** — Product Owner validates idea and creates PRD
+2. **Architecture** — Architect makes technical decisions
+3. **Implementation** — Developer creates specs
+
+## Human Gates
+
+- After Architecture: Review ADRs before implementation
+```
+
+### Step 4: Add Configuration
+
+Create `config.yml` with your settings:
 
 ```yaml
 project:
@@ -211,60 +248,78 @@ phases:
   - discovery
   - architecture
   - implementation
-  # Your phase order
 
 validation:
   human_gates:
     - architecture
 ```
 
-### Step 4: Add Prompts
+### Step 5: Add Experts (EXPERT.md + templates/)
 
-Create prompt files in `prompts/`:
+Each expert is self-contained:
 
-```
+```text
 my-crew/
-└── prompts/
-    ├── product-owner.md
-    ├── software-architect.md
-    └── developer.md
+└── experts/
+    ├── product-owner/
+    │   ├── EXPERT.md              # How this expert thinks
+    │   └── templates/
+    │       └── prd.md             # What this expert produces
+    ├── software-architect/
+    │   ├── EXPERT.md
+    │   └── templates/
+    │       └── adr.md
+    └── developer/
+        ├── EXPERT.md
+        └── templates/
+            └── changelog.md
 ```
 
-### Step 5: Add Templates
+### Step 6: Add Phases (PHASE.md)
 
-Create template files in `templates/`:
+Each phase has its definition:
 
-```
+```text
 my-crew/
-└── templates/
-    ├── prd-template.md
-    ├── adr-template.md
-    └── changelog-template.md
+└── phases/
+    ├── discovery/PHASE.md
+    ├── architecture/PHASE.md
+    └── implementation/PHASE.md
 ```
 
 ### Final Structure
 
-```
+```text
 my-crew/
-├── CREW.md                      # Required: manifest
-├── .noodlecrew.yml              # Required: configuration
-├── prompts/
-│   ├── product-owner.md
-│   ├── software-architect.md
-│   └── developer.md
-└── templates/
-    ├── prd-template.md
-    ├── adr-template.md
-    └── changelog-template.md
+├── CREW.md                           # Required: crew overview
+├── PHASES.md                         # Required: phases overview
+├── config.yml                        # Required: configuration
+├── experts/
+│   ├── product-owner/
+│   │   ├── EXPERT.md
+│   │   └── templates/
+│   │       └── prd.md
+│   ├── software-architect/
+│   │   ├── EXPERT.md
+│   │   └── templates/
+│   │       └── adr.md
+│   └── developer/
+│       ├── EXPERT.md
+│       └── templates/
+│           └── changelog.md
+└── phases/
+    ├── discovery/PHASE.md
+    ├── architecture/PHASE.md
+    └── implementation/PHASE.md
 ```
 
 ---
 
-## Prompt Writing Guide
+## EXPERT.md Writing Guide
 
 ### Structure
 
-Every expert prompt should include:
+Every EXPERT.md should include:
 
 1. **Role definition** — Who is this expert?
 2. **Responsibilities** — What do they do?
@@ -303,7 +358,7 @@ You produce:
 
 ## Output Format
 
-Use the templates in `.noodlecrew/templates/`.
+Use the templates in your `templates/` directory.
 Include a "Security Considerations" section in every artifact.
 
 ## Domain Knowledge
@@ -314,12 +369,12 @@ Include a "Security Considerations" section in every artifact.
 - Privacy by design principles
 ```
 
-### Tips for Good Prompts
+### Tips for Good EXPERT.md
 
 1. **Be specific** — "Enterprise SaaS" not "software"
 2. **Include examples** — Show the output format you want
 3. **Add constraints** — "Never recommend vendor lock-in"
-4. **Reference templates** — Point to your template files
+4. **Reference templates** — Point to your `templates/` directory
 5. **Keep focused** — One expert, one responsibility
 
 ---
@@ -419,13 +474,16 @@ Templates support variable substitution:
 Once your crew is ready:
 
 1. **Test it** — Run `ncrew init test-project --crew ./my-crew` locally
-2. **Document it** — Ensure CREW.md is complete and helpful
+2. **Document it** — Ensure CREW.md and PHASES.md are complete and helpful
 3. **Submit** — Open a PR to the NoodleCrew marketplace repository
 
 Requirements for marketplace submission:
+
 - Complete CREW.md with all sections
-- Working `.noodlecrew.yml`
-- All referenced prompts and templates included
+- Complete PHASES.md with flow description
+- Working `config.yml`
+- All experts with EXPERT.md and templates/
+- All phases with PHASE.md
 - At least one example project demonstrating output
 
 ---
@@ -437,7 +495,7 @@ Requirements for marketplace submission:
 Just change the LLM:
 
 ```yaml
-# .noodlecrew.yml
+# .noodlecrew/config.yml
 crew:
   default_llm: gemini-2.5-flash
   experts:
@@ -451,6 +509,7 @@ crew:
 Add security and performance reviewers:
 
 ```yaml
+# .noodlecrew/config.yml
 crew:
   default_llm: claude
   experts:
@@ -482,6 +541,7 @@ validation:
 Optimize for speed:
 
 ```yaml
+# .noodlecrew/config.yml
 crew:
   default_llm: gemini-2.5-flash
   experts:
