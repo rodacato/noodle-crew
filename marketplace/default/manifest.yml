@@ -1,0 +1,40 @@
+# NoodleCrew Default Manifest
+# This file configures the crew execution
+
+project:
+  name: "my-project"
+  type: "general"
+
+crew:
+  # Default LLM for all experts (uses your CLI subscription)
+  default_llm: claude
+
+  # Expert roster - order doesn't matter, phase determines execution
+  experts:
+    - role: product-owner
+      phase: discovery
+
+    - role: software-architect
+      phase: architecture
+
+    - role: developer
+      phase: implementation
+
+# Phase execution order
+phases:
+  - discovery
+  - architecture
+  - implementation
+
+# Execution settings
+execution:
+  max_iterations: 100
+  max_cost: 30.00
+
+# Validation and control
+validation:
+  # Phases that require human approval before continuing
+  human_gates: []
+  # human_gates:
+  #   - discovery      # Review PRD before architecture
+  #   - architecture   # Review ADRs before implementation
