@@ -38,8 +38,8 @@ The NoodleCrew Marketplace is a collection of pre-configured crews optimized for
 │                                                                     │
 │  3. CUSTOMIZE (optional)     4. RUN                                 │
 │  ┌──────────────┐            ┌──────────────┐                       │
-│  │ Edit config  │            │ ncrew run    │                       │
-│  │ Edit prompts │     →      │              │                       │
+│  │ Edit config  │            │ vim IDEA.md  │                       │
+│  │ Edit prompts │     →      │ ncrew run    │                       │
 │  │ Edit templates│           │              │                       │
 │  └──────────────┘            └──────────────┘                       │
 │                                                                     │
@@ -130,11 +130,19 @@ saas-b2b/
     └── implementation/PHASE.md
 ```
 
-When installed, this becomes your project's `.noodlecrew/` directory:
+When installed, your project structure becomes:
 
 ```text
 my-project/
-└── .noodlecrew/
+├── IDEA.md                           # Your idea (write here!)
+├── INDEX.md                          # Project state
+├── TODO.md                           # Task tracking
+├── docs/                             # Generated documentation
+│   ├── discovery/
+│   ├── architecture/
+│   └── implementation/
+├── questions/                        # Blockers requiring your input
+└── .noodlecrew/                      # Crew configuration
     ├── CREW.md                       # Crew overview
     ├── PHASES.md                     # Phases overview
     ├── config.yml                    # Your config (editable)
@@ -142,7 +150,8 @@ my-project/
     │   └── product-owner/
     │       ├── EXPERT.md
     │       └── templates/
-    └── phases/                       # Your phases (editable)
+    ├── phases/                       # Your phases (editable)
+    └── logs/                         # Execution logs
 ```
 
 Each expert is self-contained with its prompt and templates.

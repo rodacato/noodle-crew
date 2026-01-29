@@ -51,21 +51,26 @@ cd my-first-project
 This creates:
 ```
 my-first-project/
-├── .noodlecrew.yml          # Configuration
+├── .noodlecrew/              # Crew configuration
+│   ├── config.yml            # Main configuration
+│   ├── CREW.md               # Crew overview
+│   ├── experts/              # Expert definitions
+│   └── phases/               # Phase definitions
+├── IDEA.md                   # Your idea goes here!
 ├── INDEX.md                  # Project state
 ├── TODO.md                   # Task tracking
-├── 00-input/
-│   └── idea-original.md      # Your idea goes here
-├── 01-discovery/             # PRD will be generated here
-├── 04-architecture/          # ADRs will be generated here
-└── 05-implementation/        # Specs will be generated here
+├── docs/                     # Generated documentation
+│   ├── discovery/            # PRD will be generated here
+│   ├── architecture/         # ADRs will be generated here
+│   └── implementation/       # Specs will be generated here
+└── questions/                # Blockers requiring your input
 ```
 
 ---
 
 ## Step 3: Write Your Idea
 
-Edit `00-input/idea-original.md`:
+Edit `IDEA.md` in the project root:
 
 ```markdown
 # My SaaS Idea
@@ -117,14 +122,14 @@ Task: Generate PRD from idea-original.md
 
 [14:35:22] Building prompt context...
 [14:35:45] ✓ Response received (3,847 tokens)
-[14:35:46] ✓ Created: 01-discovery/prd.md
+[14:35:46] ✓ Created: docs/discovery/prd.md
 [14:35:47] ✓ Git commit: "feat(discovery): generate PRD"
 
 Phase: Discovery
 Expert: Product Owner
 Task: Define user personas
 
-[14:36:12] ✓ Created: 01-discovery/personas.md
+[14:36:12] ✓ Created: docs/discovery/personas.md
 ...
 ```
 
@@ -141,19 +146,23 @@ When complete, you'll have:
 
 ```
 my-first-project/
-├── 01-discovery/
-│   ├── prd.md                # Product Requirements Document
-│   ├── vision.md             # Product vision statement
-│   └── personas.md           # User personas
-├── 04-architecture/
-│   ├── adrs/
-│   │   ├── 001-frontend.md   # Frontend stack decision
-│   │   ├── 002-database.md   # Database choice
-│   │   └── 003-auth.md       # Authentication strategy
-│   └── architecture.md       # Architecture overview
-└── 05-implementation/
-    ├── CHANGELOG.md          # Version history
-    └── implementation-notes.md
+├── docs/
+│   ├── discovery/
+│   │   ├── prd.md                # Product Requirements Document
+│   │   ├── vision.md             # Product vision statement
+│   │   └── personas.md           # User personas
+│   ├── architecture/
+│   │   ├── adrs/
+│   │   │   ├── 001-frontend.md   # Frontend stack decision
+│   │   │   ├── 002-database.md   # Database choice
+│   │   │   └── 003-auth.md       # Authentication strategy
+│   │   └── architecture.md       # Architecture overview
+│   └── implementation/
+│       ├── changelog.md          # Version history
+│       └── implementation-notes.md
+└── .noodlecrew/
+    └── logs/                     # Execution logs
+        └── 2026-01-28-143522.log
 ```
 
 Each file follows a template and includes rationale for decisions.
@@ -201,7 +210,7 @@ The crew made reasonable decisions based on best practices. If you disagree, the
 - See [Configuration Guide](../guides/configuration.md)
 
 **Want to understand the decisions?**
-- Read the generated ADRs in `04-architecture/adrs/`
+- Read the generated ADRs in `docs/architecture/adrs/`
 - See [Understanding Phases](../guides/phases.md)
 
 **Want to use a pre-configured crew?**
@@ -217,7 +226,7 @@ The crew made reasonable decisions based on best practices. If you disagree, the
 
 **Crew asks too many questions?**
 
-The crew should be autonomous. If it's asking for every detail, your idea might be too vague. Add more context to `idea-original.md`.
+The crew should be autonomous. If it's asking for every detail, your idea might be too vague. Add more context to `IDEA.md`.
 
 **Crew made a bad decision?**
 
@@ -228,7 +237,7 @@ Review the ADR. The rationale is documented. You can:
 
 **Crew got stuck in a loop?**
 
-Check the iteration limit in `.noodlecrew.yml`. Default is 100. If the crew isn't making progress, review logs with `ncrew logs`.
+Check the iteration limit in `.noodlecrew/config.yml`. Default is 100. If the crew isn't making progress, review logs with `ncrew logs`.
 
 ---
 
@@ -245,14 +254,14 @@ ncrew init my-project
 cd my-project
 
 # Write your idea
-vim 00-input/idea-original.md
+vim IDEA.md
 
 # Run the crew
 bunx noodlecrew run   # or: ncrew run (if installed globally)
 
 # Review output
-cat 01-discovery/prd.md
-cat 04-architecture/adrs/001-frontend.md
+cat docs/discovery/prd.md
+cat docs/architecture/adrs/001-frontend.md
 ```
 
 That's it. Idea to prototype artifacts in minutes, not weeks.

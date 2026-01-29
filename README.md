@@ -121,22 +121,22 @@ $ ncrew run
 
 Phase: Discovery
 Expert: Product Owner
-Task: Generate PRD from idea-original.md
+Task: Generate PRD from IDEA.md
 
 [14:35:22] Building prompt context...
 [14:35:45] ✓ Response received (3,847 tokens)
-[14:35:46] ✓ Created: 01-discovery/prd.md
+[14:35:46] ✓ Created: docs/discovery/prd.md
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 🎉 Crew Execution Complete!
 
 Artifacts Generated:
-  ✓ 01-discovery/prd.md (5.2KB)
-  ✓ 01-discovery/personas.md (3.8KB)
-  ✓ 04-architecture/adrs/001-frontend.md (4.3KB)
-  ✓ 04-architecture/adrs/002-database.md (3.9KB)
-  ✓ 05-implementation/CHANGELOG.md (4.9KB)
+  ✓ docs/discovery/prd.md (5.2KB)
+  ✓ docs/discovery/personas.md (3.8KB)
+  ✓ docs/architecture/adrs/001-frontend.md (4.3KB)
+  ✓ docs/architecture/adrs/002-database.md (3.9KB)
+  ✓ docs/implementation/changelog.md (4.9KB)
 
 Total Cost: $12.50
 Total Time: 47 minutes

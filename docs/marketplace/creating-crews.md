@@ -21,9 +21,18 @@ Your crew configuration lives entirely in `.noodlecrew/`:
 
 ```text
 my-project/
-└── .noodlecrew/
+├── IDEA.md                           # Your idea (entry point)
+├── INDEX.md                          # Project state
+├── TODO.md                           # Task tracking
+├── docs/                             # Generated documentation
+│   ├── discovery/                    # PRD, personas
+│   ├── architecture/                 # ADRs
+│   └── implementation/               # Specs
+├── questions/                        # Blockers requiring input
+└── .noodlecrew/                      # Crew configuration
     ├── config.yml                    # WHO does WHAT (experts, phases, LLMs)
     ├── CREW.md                       # Crew manifest and metadata
+    ├── PHASES.md                     # Phases overview and flow
     ├── experts/                      # Self-contained expert units
     │   ├── product-owner/
     │   │   ├── EXPERT.md             # HOW this expert thinks
@@ -33,8 +42,9 @@ my-project/
     │       ├── EXPERT.md
     │       └── templates/
     │           └── adr.md
-    └── phases/                       # Phase definitions
-        └── discovery/PHASE.md
+    ├── phases/                       # Phase definitions
+    │   └── discovery/PHASE.md
+    └── logs/                         # Execution logs
 ```
 
 | Component | Purpose | Example Change |

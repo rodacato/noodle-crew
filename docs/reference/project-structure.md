@@ -10,10 +10,11 @@ When you run `ncrew init <project-name>`, NoodleCrew creates a structured projec
 
 ```text
 <project-name>/
+├── IDEA.md                           # Your idea (visible entry point!)
 ├── INDEX.md                          # Project state (master document)
 ├── TODO.md                           # Task tracking per phase
 │
-├── .noodlecrew/                      # Crew configuration (all in one place)
+├── .noodlecrew/                      # Crew configuration (hidden)
 │   ├── config.yml                    # Main configuration
 │   ├── CREW.md                       # Crew overview
 │   ├── PHASES.md                     # Phases overview
@@ -30,38 +31,32 @@ When you run `ncrew init <project-name>`, NoodleCrew creates a structured projec
 │   │       ├── EXPERT.md
 │   │       └── templates/
 │   │           └── changelog.md
-│   └── phases/                       # Phase definitions
-│       ├── discovery/PHASE.md
-│       ├── architecture/PHASE.md
-│       └── implementation/PHASE.md
+│   ├── phases/                       # Phase definitions
+│   │   ├── discovery/PHASE.md
+│   │   ├── architecture/PHASE.md
+│   │   └── implementation/PHASE.md
+│   └── logs/                         # Execution logs (hidden)
+│       └── 2026-01-28-143522.log
 │
-├── 00-input/                         # Your input
-│   └── idea-original.md              # The original idea
+├── docs/                             # Generated documentation
+│   ├── discovery/                    # Product Owner outputs
+│   │   ├── prd.md                    # Product Requirements Document
+│   │   ├── vision.md                 # Product vision statement
+│   │   └── personas.md               # User personas
+│   ├── architecture/                 # Software Architect outputs
+│   │   ├── adrs/                     # Architecture Decision Records
+│   │   │   ├── 001-frontend.md
+│   │   │   ├── 002-database.md
+│   │   │   └── ...
+│   │   ├── architecture.md           # Architecture overview
+│   │   └── tech-stack.md             # Technology choices summary
+│   └── implementation/               # Developer outputs
+│       ├── changelog.md              # Version history
+│       ├── implementation-notes.md   # Implementation guidance
+│       └── code-snippets/            # Optional code examples
 │
-├── 01-discovery/                     # Product Owner outputs
-│   ├── prd.md                        # Product Requirements Document
-│   ├── vision.md                     # Product vision statement
-│   └── personas.md                   # User personas
-│
-├── 04-architecture/                  # Software Architect outputs
-│   ├── adrs/                         # Architecture Decision Records
-│   │   ├── 001-frontend.md
-│   │   ├── 002-database.md
-│   │   └── ...
-│   ├── architecture.md               # Architecture overview
-│   └── tech-stack.md                 # Technology choices summary
-│
-├── 05-implementation/                # Developer outputs
-│   ├── CHANGELOG.md                  # Version history
-│   ├── implementation-notes.md       # Implementation guidance
-│   └── code-snippets/                # Optional code examples
-│
-├── questions/                        # Blocker questions
-│   └── to-user/                      # Questions requiring human input
-│       └── architect-001.md
-│
-└── logs/                             # Execution logs
-    └── 20260128-143522.log
+└── questions/                        # Blocker questions (visible)
+    └── architect-001-auth.md         # Questions requiring human input
 ```
 
 ---
@@ -179,9 +174,9 @@ updated: "2026-01-28T14:52:33Z"
 
 ## Artifacts
 
-- [x] 01-discovery/prd.md
-- [x] 01-discovery/personas.md
-- [ ] 04-architecture/adrs/001-frontend.md (in progress)
+- [x] docs/discovery/prd.md
+- [x] docs/discovery/personas.md
+- [ ] docs/architecture/adrs/001-frontend.md (in progress)
 ```
 
 ### TODO.md
@@ -221,19 +216,17 @@ updated: "2026-01-28T14:52:33Z"
 
 ---
 
-## Input Directory
+## Input: IDEA.md
 
-### 00-input/
+**Purpose:** Your idea — the entry point for the crew.
 
-**Purpose:** Contains your original input to the crew.
+**Location:** Project root (visible!)
 
-**Files:**
+**Created by:** `ncrew init`
 
-| File | Purpose |
-| ---- | ------- |
-| `idea-original.md` | Your idea in markdown format |
+**Modified by:** User
 
-**Example idea-original.md:**
+**Example IDEA.md:**
 
 ```markdown
 # My SaaS Idea
@@ -260,9 +253,36 @@ A collaborative notes app with AI-powered summarization.
 
 ---
 
+## Generated Documentation
+
+### docs/
+
+**Purpose:** All generated documentation from the crew. Standard location for project docs.
+
+**Created by:** Crew (automatically during execution)
+
+**Structure:**
+
+```text
+docs/
+├── discovery/                    # Product Owner outputs
+│   ├── prd.md
+│   ├── vision.md
+│   └── personas.md
+├── architecture/                 # Software Architect outputs
+│   ├── adrs/
+│   │   ├── 001-frontend.md
+│   │   └── 002-database.md
+│   └── architecture.md
+└── implementation/               # Developer outputs
+    └── changelog.md
+```
+
+---
+
 ## Discovery Directory
 
-### 01-discovery/
+### docs/discovery/
 
 **Purpose:** Product Owner outputs — defines *what* to build and *why*.
 
@@ -274,7 +294,7 @@ A collaborative notes app with AI-powered summarization.
 
 | File | Purpose | Template |
 | ---- | ------- | -------- |
-| `prd.md` | Product Requirements Document | [prd-template.md](../../templates/prd-template.md) |
+| `prd.md` | Product Requirements Document | `.noodlecrew/experts/product-owner/templates/prd.md` |
 | `vision.md` | Product vision statement | — |
 | `personas.md` | User personas | — |
 
@@ -304,7 +324,7 @@ phase: discovery
 
 ## Architecture Directory
 
-### 04-architecture/
+### docs/architecture/
 
 **Purpose:** Software Architect outputs — defines *how* to build it.
 
@@ -314,8 +334,8 @@ phase: discovery
 
 **Structure:**
 
-```
-04-architecture/
+```text
+docs/architecture/
 ├── adrs/                         # Architecture Decision Records
 │   ├── 001-frontend.md
 │   ├── 002-database.md
@@ -329,7 +349,7 @@ phase: discovery
 
 | File | Purpose | Template |
 | ---- | ------- | -------- |
-| `adrs/*.md` | Architecture Decision Records | [adr-template.md](../../templates/adr-template.md) |
+| `adrs/*.md` | Architecture Decision Records | `.noodlecrew/experts/software-architect/templates/adr.md` |
 | `architecture.md` | System architecture overview | — |
 | `tech-stack.md` | Technology choices summary | — |
 
@@ -356,7 +376,7 @@ decision-makers: [software-architect]
 
 ## Implementation Directory
 
-### 05-implementation/
+### docs/implementation/
 
 **Purpose:** Developer outputs — defines *how to implement* the architecture.
 
@@ -368,7 +388,7 @@ decision-makers: [software-architect]
 
 | File | Purpose | Template |
 | ---- | ------- | -------- |
-| `CHANGELOG.md` | Version history | [changelog-template.md](../../templates/changelog-template.md) |
+| `changelog.md` | Version history | `.noodlecrew/experts/developer/templates/changelog.md` |
 | `implementation-notes.md` | Implementation guidance | — |
 | `code-snippets/` | Optional code examples | — |
 
@@ -397,17 +417,14 @@ All notable changes to this project will be documented in this file.
 
 ### questions/
 
-**Purpose:** Blocker questions requiring human input.
+**Purpose:** Blocker questions requiring human input. Visible at project root because they need your attention.
 
 **Structure:**
 
-```
+```text
 questions/
-├── to-user/                      # Questions for the human
-│   ├── architect-001.md
-│   └── developer-001.md
-└── inter-expert/                 # Questions between experts
-    └── dev-to-architect-001.md
+├── architect-001-auth.md         # Question about authentication
+└── developer-002-deployment.md   # Question about deployment
 ```
 
 **Created by:** Crew (when encountering critical blockers)
@@ -460,52 +477,48 @@ created: "2026-01-28T14:52:33Z"
 
 ## Logs Directory
 
-### logs/
+### .noodlecrew/logs/
 
-**Purpose:** Execution logs for debugging and auditing.
+**Purpose:** Execution logs for debugging and auditing. Hidden inside `.noodlecrew/` because they're internal.
 
-**Files:** `YYYYMMDD-HHMMSS.log`
+**Files:** `YYYY-MM-DD-HHMMSS.log`
 
 **Example:**
 
-```
-logs/
-├── 20260128-143522.log           # Execution started at 14:35:22
-└── 20260128-161245.log           # Resumed at 16:12:45
+```text
+.noodlecrew/logs/
+├── 2026-01-28-143522.log         # Execution started at 14:35:22
+└── 2026-01-28-161245.log         # Resumed at 16:12:45
 ```
 
 **Log Format:**
 
-```
+```text
 [2026-01-28 14:35:22] INFO: Starting iteration 1/100
 [2026-01-28 14:35:22] INFO: Phase: discovery
 [2026-01-28 14:35:22] INFO: Expert: product-owner
-[2026-01-28 14:35:22] INFO: Task: Generate PRD from idea-original.md
+[2026-01-28 14:35:22] INFO: Task: Generate PRD from IDEA.md
 [2026-01-28 14:35:23] INFO: Building prompt context...
 [2026-01-28 14:35:45] INFO: Response received (3,847 tokens)
-[2026-01-28 14:35:46] INFO: Created: 01-discovery/prd.md
+[2026-01-28 14:35:46] INFO: Created: docs/discovery/prd.md
 [2026-01-28 14:35:47] INFO: Git commit: feat(discovery): generate PRD
 [2026-01-28 14:35:48] INFO: Iteration 1 complete (26 seconds)
 ```
 
 ---
 
-## Directory Numbering Convention
+## Directory Structure Rationale
 
-Directories are numbered to indicate execution order:
+The structure follows these principles:
 
-| Number | Phase | Expert |
-| ------ | ----- | ------ |
-| 00 | Input | User |
-| 01 | Discovery | Product Owner |
-| 02 | Planning | Product Manager (future) |
-| 03 | Design | UX Designer (future) |
-| 04 | Architecture | Software Architect |
-| 05 | Implementation | Developer |
-| 06 | QA | QA Engineer (future) |
-| 07 | Delivery | — (future) |
-
-Gaps (02, 03, 06, 07) are reserved for future phases.
+| Location | Visibility | Rationale |
+| -------- | ---------- | --------- |
+| `IDEA.md` | Visible (root) | Entry point should be obvious |
+| `INDEX.md`, `TODO.md` | Visible (root) | State tracking should be accessible |
+| `docs/` | Visible (root) | Standard documentation location |
+| `questions/` | Visible (root) | Blockers need user attention |
+| `.noodlecrew/` | Hidden | Configuration is internal |
+| `.noodlecrew/logs/` | Hidden | Debug info is internal |
 
 ---
 
@@ -517,14 +530,14 @@ Gaps (02, 03, 06, 07) are reserved for future phases.
 | `.noodlecrew/config.yml` | `ncrew init` | User |
 | `.noodlecrew/experts/` | `ncrew init` | User |
 | `.noodlecrew/phases/` | `ncrew init` | User |
+| `.noodlecrew/logs/` | Crew | — |
+| `IDEA.md` | `ncrew init` | User |
 | `INDEX.md` | `ncrew init` | Crew |
 | `TODO.md` | `ncrew init` | Crew |
-| `00-input/*` | `ncrew init` | User |
-| `01-discovery/*` | Crew | Crew |
-| `04-architecture/*` | Crew | Crew |
-| `05-implementation/*` | Crew | Crew |
+| `docs/discovery/*` | Crew | Crew |
+| `docs/architecture/*` | Crew | Crew |
+| `docs/implementation/*` | Crew | Crew |
 | `questions/*` | Crew | User (answers) |
-| `logs/*` | Crew | — |
 
 ---
 

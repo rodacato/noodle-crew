@@ -78,9 +78,9 @@ These are the primary experts for most projects.
 - Define MVP scope
 
 **Artifacts:**
-- `01-discovery/prd.md` — Product Requirements Document
-- `01-discovery/vision.md` — Product vision statement
-- `01-discovery/personas.md` — User personas
+- `docs/discovery/prd.md` — Product Requirements Document
+- `docs/discovery/vision.md` — Product vision statement
+- `docs/discovery/personas.md` — User personas
 
 **When to use:** Always. Every project starts with discovery.
 
@@ -100,9 +100,9 @@ These are the primary experts for most projects.
 - Define data models
 
 **Artifacts:**
-- `04-architecture/adrs/*.md` — Architecture Decision Records
-- `04-architecture/architecture.md` — System architecture overview
-- `04-architecture/tech-stack.md` — Technology choices
+- `docs/architecture/adrs/*.md` — Architecture Decision Records
+- `docs/architecture/architecture.md` — System architecture overview
+- `docs/architecture/tech-stack.md` — Technology choices
 
 **When to use:** Always. Technical decisions should be documented.
 
@@ -121,9 +121,9 @@ These are the primary experts for most projects.
 - Maintain changelog
 
 **Artifacts:**
-- `05-implementation/CHANGELOG.md` — Version history
-- `05-implementation/implementation-notes.md` — Build specifications
-- `05-implementation/code-structure.md` — Project organization
+- `docs/implementation/changelog.md` — Version history
+- `docs/implementation/implementation-notes.md` — Build specifications
+- `docs/implementation/code-structure.md` — Project organization
 
 **When to use:** Always. Implementation specs guide development.
 
@@ -146,9 +146,9 @@ Additional experts for comprehensive projects.
 - Document UI patterns
 
 **Artifacts:**
-- `02-design/wireframes.md` — Screen mockups (ASCII/description)
-- `02-design/user-flows.md` — User journey diagrams
-- `02-design/design-system.md` — Colors, typography, components
+- `docs/design/wireframes.md` — Screen mockups (ASCII/description)
+- `docs/design/user-flows.md` — User journey diagrams
+- `docs/design/design-system.md` — Colors, typography, components
 
 **When to use:** Consumer apps, complex UIs, user-facing products.
 
@@ -167,9 +167,9 @@ Additional experts for comprehensive projects.
 - Document acceptance criteria
 
 **Artifacts:**
-- `06-testing/test-plan.md` — Testing strategy
-- `06-testing/test-cases.md` — Specific test scenarios
-- `06-testing/quality-gates.md` — Release criteria
+- `docs/testing/test-plan.md` — Testing strategy
+- `docs/testing/test-cases.md` — Specific test scenarios
+- `docs/testing/quality-gates.md` — Release criteria
 
 **When to use:** Production-bound projects, compliance requirements.
 
@@ -188,9 +188,9 @@ Additional experts for comprehensive projects.
 - Maintain README
 
 **Artifacts:**
-- `07-docs/api-reference.md` — API documentation
-- `07-docs/user-guide.md` — End-user documentation
-- `07-docs/installation.md` — Setup instructions
+- `docs/documentation/api-reference.md` — API documentation
+- `docs/documentation/user-guide.md` — End-user documentation
+- `docs/documentation/installation.md` — Setup instructions
 
 **When to use:** Developer tools, APIs, products with users.
 
@@ -213,7 +213,7 @@ Cross-cutting experts that review artifacts from other phases.
 - Document security decisions
 
 **Artifacts:**
-- `04-architecture/adrs/xxx-security.md` — Security ADR
+- `docs/architecture/adrs/xxx-security.md` — Security ADR
 
 **When to use:** Fintech, healthcare, auth systems, data-sensitive apps.
 
@@ -232,7 +232,7 @@ Cross-cutting experts that review artifacts from other phases.
 - Document performance decisions
 
 **Artifacts:**
-- `04-architecture/adrs/xxx-performance.md` — Performance ADR
+- `docs/architecture/adrs/xxx-performance.md` — Performance ADR
 
 **When to use:** High-traffic apps, real-time systems, data-intensive apps.
 
@@ -251,7 +251,7 @@ Cross-cutting experts that review artifacts from other phases.
 - Document a11y decisions
 
 **Artifacts:**
-- `04-architecture/adrs/xxx-accessibility.md` — Accessibility ADR
+- `docs/architecture/adrs/xxx-accessibility.md` — Accessibility ADR
 
 **When to use:** Consumer apps, government/enterprise requirements, inclusive products.
 

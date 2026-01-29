@@ -86,13 +86,14 @@ This creates:
 
 ```text
 my-saas/
+├── IDEA.md                           # Write your idea here!
 ├── INDEX.md                          # Project state
 ├── TODO.md                           # Task tracking
-├── 00-input/
-│   └── idea-original.md              # Write your idea here
-├── 01-discovery/                     # PRD will go here
-├── 04-architecture/                  # ADRs will go here
-├── 05-implementation/                # Specs will go here
+├── docs/                             # Generated documentation
+│   ├── discovery/                    # PRD will go here
+│   ├── architecture/                 # ADRs will go here
+│   └── implementation/               # Specs will go here
+├── questions/                        # Blockers requiring your input
 └── .noodlecrew/                      # All crew config here
     ├── config.yml                    # Pre-configured for SaaS B2B
     ├── CREW.md                       # Crew overview
@@ -101,8 +102,9 @@ my-saas/
     │   └── product-owner/
     │       ├── EXPERT.md
     │       └── templates/
-    └── phases/                       # Crew phases
-        └── discovery/PHASE.md
+    ├── phases/                       # Crew phases
+    │   └── discovery/PHASE.md
+    └── logs/                         # Execution logs
 ```
 
 ### Existing Project
@@ -127,7 +129,7 @@ After installation, run the crew:
 
 ```bash
 # Write your idea first
-vim 00-input/idea-original.md
+vim IDEA.md
 
 # Run the crew
 ncrew run
