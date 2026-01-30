@@ -23,6 +23,16 @@
 # EXAMPLES:
 #   ./scripts/init-example.sh examples/finance-tracker
 #
+# EXIT CODES:
+#   0 - Success (or already initialized)
+#   1 - Invalid arguments
+#   2 - Directory not found
+#   3 - Required files missing (IDEA.md)
+#
+# SEE ALSO:
+#   - run-expert.sh (execute experts after init)
+#   - clean-example.sh (reset to initial state)
+#
 # ============================================================================
 
 set -e

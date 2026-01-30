@@ -26,6 +26,15 @@
 # EXAMPLES:
 #   ./scripts/clean-example.sh examples/finance-tracker
 #
+# EXIT CODES:
+#   0 - Success
+#   1 - Invalid arguments
+#   2 - Directory not found
+#
+# SEE ALSO:
+#   - init-example.sh (re-initialize after clean)
+#   - run-expert.sh (execute experts)
+#
 # ============================================================================
 
 set -e

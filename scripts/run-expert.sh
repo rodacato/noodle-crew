@@ -34,6 +34,12 @@
 #   3 - Project files missing
 #   4 - LLM execution failed
 #
+# SEE ALSO:
+#   - init-example.sh (initialize project before running)
+#   - build-prompt.sh (assembles the prompt)
+#   - clean-example.sh (reset project after testing)
+#   - iterate.sh (runs multiple experts in a loop)
+#
 # ============================================================================
 
 set -e

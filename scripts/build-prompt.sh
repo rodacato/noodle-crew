@@ -29,10 +29,19 @@
 #   7. [TEMPLATES]  templates/      Output formats
 #   8. [INSTRUCTION]                "Execute your next task..."
 #
+# EXAMPLES:
+#   ./scripts/build-prompt.sh product-owner examples/finance-tracker
+#   ./scripts/build-prompt.sh product-owner examples/finance-tracker --output /tmp/prompt.md
+#   ./scripts/build-prompt.sh software-architect examples/finance-tracker --crew marketplace/custom
+#
 # EXIT CODES:
 #   0 - Success
 #   1 - Invalid arguments
 #   2 - Required files missing
+#
+# SEE ALSO:
+#   - run-expert.sh (uses this to build prompts)
+#   - FLOW.md Section 2.2 (Context Injection Order)
 #
 # ============================================================================
 
