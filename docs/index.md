@@ -1,73 +1,172 @@
 ---
 layout: default
-title: Home
+title: NoodleCrew
 nav_order: 1
 ---
 
-# NoodleCrew Documentation
+# NoodleCrew
 
 > Your AI product team that works while you sleep
 
-Welcome to the NoodleCrew documentation. Choose your path:
-
-## Quick Links
-
-- **New here?** Start with the [Quickstart Guide](getting-started/quickstart.md)
-- **Want to understand the system?** Read [Philosophy](concepts/philosophy.md)
-- **Ready to configure?** Check [Configuration Guide](guides/index.md)
-- **Looking for crews?** Browse the [Marketplace](marketplace/index.md)
+NoodleCrew es un sistema de agentes IA autónomos que transforma tu idea en un prototipo documentado. Sin supervisión constante, sin context switching.
 
 ---
 
-## Documentation Sections
+## Qué es
 
-### Getting Started
+Un equipo virtual de expertos IA que trabaja de forma autónoma:
 
-| Document | Description |
-| -------- | ----------- |
-| [Quickstart](getting-started/quickstart.md) | 5-minute tutorial to run your first crew |
+```
+Tu Idea (markdown)
+       ↓
+   NoodleCrew
+       ↓
+┌──────────────┐    ┌──────────────┐    ┌──────────────┐
+│Product Owner │ → │  Architect   │ → │  Developer   │
+│ PRD, Vision  │    │ ADRs, Stack  │    │ Specs, Code  │
+└──────────────┘    └──────────────┘    └──────────────┘
+       ↓
+Prototipo + Documentación Completa
+```
 
-### Concepts
+Cada experto:
+- Lee el estado actual del proyecto
+- Hace UNA tarea
+- Actualiza los archivos de estado
+- Hace commit
+- Termina su turno
 
-| Document | Description |
-| -------- | ----------- |
-| [Philosophy](concepts/philosophy.md) | Why NoodleCrew exists and its core principles |
-| [Architecture](concepts/architecture.md) | How the execution loop works internally |
-
-### Guides
-
-| Document | Description |
-| -------- | ----------- |
-| [Configuration](guides/index.md) | Experts, phases, LLMs, and customization |
-
-### Marketplace
-
-| Document | Description |
-| -------- | ----------- |
-| [Marketplace](marketplace/index.md) | Using and creating crews |
-
-### Reference
-
-| Document | Description |
-| -------- | ----------- |
-| [Project Structure](reference/project-structure.md) | Generated folder layout |
-| [Expert Format](reference/expert-format.md) | EXPERT.md specification with examples |
-| [State Files](reference/state-files.md) | INDEX.md, TODO.md, blockers, and termination |
-| [CLI Integration](reference/cli-integration.md) | One-shot execution with claude/gemini |
+El loop continúa hasta completar todas las fases.
 
 ---
 
-## Project Status
+## Cómo funciona
 
-**Current Phase**: Phase 1 - Manual PoC
+### 1. Escribes tu idea
 
-This documentation describes the intended design. Some features may not be implemented yet.
+Crea un archivo `IDEA.md` con el problema, solución y usuarios:
 
-See [Development Status](../DEVELOPMENT.md) for roadmap and implementation status.
+```markdown
+# Mi SaaS de Notas
+
+## Problem
+Los equipos remotos pierden contexto en sus notas...
+
+## Solution
+Una app de notas colaborativas con contexto automático...
+
+## Users
+- Equipos remotos de 5-20 personas
+- Product managers
+```
+
+### 2. El crew trabaja
+
+Cada experto se ejecuta en secuencia:
+
+| Fase | Experto | Produce |
+|------|---------|---------|
+| Discovery | Product Owner | PRD, Personas, Vision |
+| Architecture | Software Architect | ADRs, Tech Stack |
+| Implementation | Developer | Specs, Changelog |
+
+### 3. Obtienes artifacts
+
+```
+docs/
+├── discovery/
+│   ├── prd.md
+│   ├── personas.md
+│   └── vision.md
+├── architecture/
+│   ├── adrs/
+│   │   ├── 001-frontend.md
+│   │   └── 002-database.md
+│   └── tech-stack.md
+└── implementation/
+    └── changelog.md
+```
+
+Cada archivo tiene commits individuales. Full audit trail.
 
 ---
 
-## Need Help?
+## Cómo usarlo
 
-- Read the [Philosophy](concepts/philosophy.md) to understand the design
-- Open an [issue](https://github.com/rodacato/noodle-crew/issues) for bugs or questions
+### Opción 1: Manual (PoC actual)
+
+```bash
+# Clonar el repo
+git clone https://github.com/rodacato/noodle-crew
+cd noodle-crew
+
+# Ver el prompt que se enviaría
+./scripts/run-expert.sh product-owner examples/landing-saas --dry-run
+
+# Ejecutar un experto
+./scripts/run-expert.sh product-owner examples/landing-saas
+```
+
+Repite hasta completar todas las tareas de cada fase.
+
+### Opción 2: CLI (próximamente)
+
+```bash
+# Inicializar proyecto
+ncrew init mi-proyecto
+
+# Ejecutar el crew completo
+ncrew run
+
+# Ver estado
+ncrew status
+```
+
+---
+
+## Principios
+
+1. **Artifacts Before Code** — Documentación primero, código después
+2. **Vault-Native** — Markdown + Git como source of truth
+3. **Autonomous but Auditable** — Corre solo, pero todo queda registrado
+4. **Opinionated Defaults** — El crew decide y documenta el rationale
+
+---
+
+## Documentación
+
+| Sección | Descripción |
+|---------|-------------|
+| [Quickstart](getting-started/quickstart.md) | Tutorial de 5 minutos |
+| [Philosophy](concepts/philosophy.md) | Por qué existe NoodleCrew |
+| [Architecture](concepts/architecture.md) | Cómo funciona el loop |
+| [Configuration](guides/index.md) | Configurar expertos y fases |
+| [Expert Format](reference/expert-format.md) | Especificación EXPERT.md |
+| [Marketplace](marketplace/index.md) | Crews pre-configurados |
+
+---
+
+## Estado del Proyecto
+
+**Fase actual:** Manual PoC
+
+- [x] Diseño y documentación
+- [x] Default crew (3 expertos)
+- [ ] Validación manual
+- [ ] Iterator automatizado
+- [ ] CLI tool
+
+Ver [DEVELOPMENT.md](https://github.com/rodacato/noodle-crew/blob/master/DEVELOPMENT.md) para el roadmap completo.
+
+---
+
+## Links
+
+- [GitHub](https://github.com/rodacato/noodle-crew)
+- [Issues](https://github.com/rodacato/noodle-crew/issues)
+
+---
+
+<p align="center">
+  <sub>Part of the neural-noodle ecosystem</sub>
+</p>
