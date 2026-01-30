@@ -72,20 +72,34 @@ Cada experto se ejecuta en secuencia:
 
 ### 3. Obtienes artifacts
 
+```text
+mi-proyecto/
+├── IDEA.md                 # Tu idea (INPUT)
+├── INDEX.md                # Estado resumido (visible)
+├── .noodlecrew/            # Internals (oculto)
+│   ├── manifest.yml
+│   ├── tasks.md
+│   ├── questions/
+│   └── logs/
+└── docs/                   # Artifacts generados (OUTPUT)
+    ├── discovery/
+    │   ├── prd.md
+    │   ├── personas.md
+    │   └── vision.md
+    ├── architecture/
+    │   ├── adrs/
+    │   └── tech-stack.md
+    └── implementation/
+        └── changelog.md
 ```
-docs/
-├── discovery/
-│   ├── prd.md
-│   ├── personas.md
-│   └── vision.md
-├── architecture/
-│   ├── adrs/
-│   │   ├── 001-frontend.md
-│   │   └── 002-database.md
-│   └── tech-stack.md
-└── implementation/
-    └── changelog.md
-```
+
+**Tres capas de archivos:**
+
+| Capa | Ubicación | Propósito |
+|------|-----------|-----------|
+| INPUT | `IDEA.md` | Tu idea |
+| STATE | `INDEX.md` + `.noodlecrew/` | Estado del crew |
+| OUTPUT | `docs/` | Artifacts generados |
 
 Cada archivo tiene commits individuales. Full audit trail.
 

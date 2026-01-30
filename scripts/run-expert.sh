@@ -52,8 +52,8 @@ if [[ ! -f "$ROOT_DIR/$PROJECT_DIR/IDEA.md" ]]; then
   exit 1
 fi
 
-if [[ ! -f "$ROOT_DIR/$PROJECT_DIR/TODO.md" ]]; then
-  echo -e "${RED}Error: $PROJECT_DIR/TODO.md no encontrado${NC}"
+if [[ ! -f "$ROOT_DIR/$PROJECT_DIR/.noodlecrew/tasks.md" ]]; then
+  echo -e "${RED}Error: $PROJECT_DIR/.noodlecrew/tasks.md no encontrado${NC}"
   exit 1
 fi
 
@@ -66,7 +66,7 @@ fi
 EXPERT_CONTENT=$(cat "$ROOT_DIR/$CREW_DIR/experts/$EXPERT/EXPERT.md")
 WORKFLOW_CONTENT=$(cat "$ROOT_DIR/$CREW_DIR/WORKFLOW.md")
 IDEA_CONTENT=$(cat "$ROOT_DIR/$PROJECT_DIR/IDEA.md")
-TODO_CONTENT=$(cat "$ROOT_DIR/$PROJECT_DIR/TODO.md")
+TASKS_CONTENT=$(cat "$ROOT_DIR/$PROJECT_DIR/.noodlecrew/tasks.md")
 INDEX_CONTENT=$(cat "$ROOT_DIR/$PROJECT_DIR/INDEX.md")
 
 # Construir el prompt
@@ -90,9 +90,9 @@ $IDEA_CONTENT
 
 ---
 
-## TODO.md
+## Tasks (.noodlecrew/tasks.md)
 
-$TODO_CONTENT
+$TASKS_CONTENT
 
 ---
 
@@ -107,10 +107,10 @@ $INDEX_CONTENT
 You are working in the project directory. Execute your next task following the workflow instructions above.
 
 Remember:
-1. Read TODO.md to find your next unchecked task
+1. Read .noodlecrew/tasks.md to find your next unchecked task
 2. Do ONE task only
 3. Create artifacts in docs/
-4. Update TODO.md and INDEX.md
+4. Update .noodlecrew/tasks.md and INDEX.md
 5. Commit your changes
 6. End your turn"
 
