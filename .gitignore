@@ -1,2 +1,11 @@
 .idea
 .claude
+
+# NoodleCrew example projects have their own git repos
+# These are created by init-example.sh and cleaned by clean-example.sh
+examples/*/.git
+
+# Generated artifacts (also ignored inside example repos)
+examples/*/docs/**/*.md
+examples/*/questions/*.md
+examples/*/CREW_COMPLETE
