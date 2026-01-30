@@ -34,6 +34,20 @@
 #   ./scripts/build-prompt.sh product-owner examples/finance-tracker --output /tmp/prompt.md
 #   ./scripts/build-prompt.sh software-architect examples/finance-tracker --crew marketplace/custom
 #
+# INPUTS (from project):
+#   - IDEA.md
+#   - INDEX.md
+#   - .noodlecrew/tasks.md
+#   - docs/**/*.md (all previous artifacts)
+#
+# INPUTS (from crew):
+#   - experts/<role>/EXPERT.md
+#   - experts/<role>/templates/*.md
+#   - WORKFLOW.md
+#
+# OUTPUT:
+#   Assembled prompt as markdown text (stdout or file)
+#
 # EXIT CODES:
 #   0 - Success
 #   1 - Invalid arguments

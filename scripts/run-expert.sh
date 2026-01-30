@@ -27,6 +27,28 @@
 #   ./scripts/run-expert.sh product-owner examples/finance-tracker --no-commit
 #   ./scripts/run-expert.sh software-architect examples/finance-tracker --llm gemini
 #
+# DEPENDENCIES:
+#   - build-prompt.sh (to assemble the prompt)
+#   - claude CLI or gemini CLI installed and configured
+#
+# INPUTS (read from project):
+#   - IDEA.md
+#   - INDEX.md
+#   - .noodlecrew/tasks.md
+#   - docs/* (previous artifacts)
+#
+# INPUTS (read from crew):
+#   - experts/<role>/EXPERT.md
+#   - experts/<role>/templates/*
+#   - WORKFLOW.md
+#
+# OUTPUTS:
+#   - Expert creates artifacts in docs/<phase>/
+#   - Expert updates .noodlecrew/tasks.md
+#   - Expert updates INDEX.md
+#   - Expert creates git commit (unless --no-commit)
+#   - Expert may create CREW_COMPLETE if all done
+#
 # EXIT CODES:
 #   0 - Success
 #   1 - Invalid arguments
@@ -39,6 +61,7 @@
 #   - build-prompt.sh (assembles the prompt)
 #   - clean-example.sh (reset project after testing)
 #   - iterate.sh (runs multiple experts in a loop)
+#   - FLOW.md (execution contract)
 #
 # ============================================================================
 
