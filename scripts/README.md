@@ -28,6 +28,11 @@ These scripts implement the execution loop described in [FLOW.md](../FLOW.md). T
 │                    │                                     │          │
 │                    └─────────────────────────────────────┘          │
 │                                                                     │
+│  doctor.sh ◄─── diagnose problems                                   │
+│       │                                                             │
+│       ▼                                                             │
+│  recover.sh ◄─── fix problems (uses git for recovery)               │
+│                                                                     │
 └─────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -50,6 +55,13 @@ These scripts implement the execution loop described in [FLOW.md](../FLOW.md). T
 | `build-prompt.sh` | Assemble expert prompt from context |
 | `run-expert.sh` | Execute a single expert turn |
 | `check-termination.sh` | Check if loop should stop |
+
+### Diagnostics & Recovery
+
+| Script | Purpose |
+|--------|---------|
+| `doctor.sh` | Diagnose project health and detect issues |
+| `recover.sh` | Recover from failed or inconsistent states |
 
 ---
 
@@ -91,6 +103,28 @@ Executes one expert turn. Use `--dry-run` to see prompt without executing.
 
 See current state and termination conditions.
 
+### Diagnose Problems
+
+```bash
+./scripts/doctor.sh examples/landing-saas
+./scripts/doctor.sh examples/landing-saas --fix
+```
+
+Check project health and get fix suggestions.
+
+### Recover from Failures
+
+```bash
+# Discard uncommitted changes (expert failed mid-task)
+./scripts/recover.sh examples/landing-saas --discard
+
+# Undo last completed iteration
+./scripts/recover.sh examples/landing-saas --reset-last
+
+# Fix state inconsistencies
+./scripts/recover.sh examples/landing-saas --sync-tasks
+```
+
 ---
 
 ## Exit Codes
@@ -109,11 +143,31 @@ All scripts follow a consistent exit code scheme:
 
 ---
 
+## Recovery Philosophy
+
+**Git is our checkpoint system.** No separate checkpoint files needed.
+
+Each successful iteration ends with a git commit:
+```
+feat(discovery): generate PRD from idea
+feat(architecture): ADR-001 frontend framework
+```
+
+Recovery scenarios:
+
+| Scenario | What Happened | Recovery |
+|----------|---------------|----------|
+| Expert failed before commit | Changes uncommitted | `--discard` (git checkout .) |
+| Need to undo last iteration | Commit exists | `--reset-last` (git reset HEAD~1) |
+| State inconsistent | Manual edits broke things | `--sync-tasks` |
+
+---
+
 ## Dependencies
 
 - **bash** (4.0+)
 - **claude** CLI - Claude Code installed and authenticated
-- **git** - For commits
+- **git** - For commits and recovery
 - **yq** (optional) - For YAML parsing
 
 ### LLM Requirements
@@ -135,12 +189,15 @@ Default is `claude`. Ensure the respective CLI is installed:
 
 These scripts are currently **documentation stubs**. They log what they would do but don't execute real logic yet.
 
-To implement:
-1. Start with `build-prompt.sh` (pure function, easy to test)
-2. Then `check-termination.sh` (file checks)
-3. Then `resolve-context.sh` (state parsing)
-4. Then `run-expert.sh` (LLM integration)
-5. Finally `iterate.sh` (orchestrates everything)
+Implementation order:
+1. `build-prompt.sh` (pure function, easy to test)
+2. `check-termination.sh` (file checks)
+3. `resolve-context.sh` (state parsing)
+4. `doctor.sh` (validation checks)
+5. `run-expert.sh` (LLM integration)
+6. `recover.sh` (git operations)
+7. `iterate.sh` (orchestrates everything)
+8. `init-project.sh` (file copying)
 
 ---
 
@@ -178,3 +235,4 @@ noodle-crew/
 - Scripts are **internal** - the public interface will be the `ncrew` CLI
 - All scripts include detailed documentation in header comments
 - Run any script without arguments to see usage help
+- Recovery uses git - no separate checkpoint system needed
