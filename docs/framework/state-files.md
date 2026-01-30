@@ -11,7 +11,7 @@ NoodleCrew uses markdown files as the source of truth for project state:
 | File              | Purpose                              | Created By  | Modified By |
 |-------------------|--------------------------------------|-------------|-------------|
 | INDEX.md          | Project state (phase, iteration)     | `ncrew init`| Expert      |
-| TODO.md           | Task checklist per phase             | `ncrew init`| Expert      |
+| tasks.md          | Task checklist per phase             | `ncrew init`| Expert      |
 | questions/*.md    | Blocker questions                    | Expert      | User        |
 | CREW_COMPLETE     | Termination signal                   | Expert      | —           |
 
@@ -74,7 +74,7 @@ status: in_progress
 
 ---
 
-## TODO.md
+## tasks.md
 
 ### Purpose
 
@@ -88,7 +88,7 @@ project: my-project
 updated: "2026-01-28T14:52:33Z"
 ---
 
-# TODO
+# Tasks
 
 ## Discovery Phase ✅ COMPLETE
 
@@ -117,7 +117,7 @@ updated: "2026-01-28T14:52:33Z"
 
 ### Expert Behavior
 
-1. Read TODO.md
+1. Read tasks.md
 2. Find first phase with unchecked tasks
 3. Pick first unchecked task `[ ]` in that phase
 4. Do the task
@@ -252,7 +252,7 @@ Following the DLP pattern:
 
 - **Simple detection**: Orchestrator just checks `file_exists("CREW_COMPLETE")`
 - **Expert decides**: The expert has full context to know when truly done
-- **No parsing**: Orchestrator doesn't need to parse TODO.md
+- **No parsing**: Orchestrator doesn't need to parse tasks.md
 
 ### Expert Logic
 
@@ -263,7 +263,7 @@ The expert's instructions include:
 
 After completing your task:
 
-1. Check TODO.md — are ALL tasks in ALL phases checked [x]?
+1. Check tasks.md — are ALL tasks in ALL phases checked [x]?
 2. If YES → run: `touch CREW_COMPLETE` and end your turn
 3. If NO → end your turn normally (loop will restart you)
 ```
@@ -305,7 +305,7 @@ current_iteration: 1
 ```
 
 ```markdown
-# TODO.md
+# tasks.md
 ## Discovery Phase 🔄 IN PROGRESS
 - [ ] Generate PRD
 - [ ] Define personas
@@ -324,7 +324,7 @@ current_iteration: 47
 ```
 
 ```markdown
-# TODO.md
+# tasks.md
 ## Discovery Phase ✅ COMPLETE
 - [x] Generate PRD
 - [x] Define personas

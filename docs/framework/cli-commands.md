@@ -8,7 +8,7 @@
 
 NoodleCrew's orchestrator launches experts as one-shot CLI commands. Each expert receives:
 
-- Context files (IDEA.md, TODO.md, previous artifacts)
+- Context files (IDEA.md, tasks.md, previous artifacts)
 - System prompt (EXPERT.md + WORKFLOW.md)
 - A task instruction
 
@@ -32,7 +32,7 @@ claude -p \
   --append-system-prompt-file .noodlecrew/WORKFLOW.md \
   --output-format json \
   --max-turns 10 \
-  "Read TODO.md and complete the next unchecked task in your phase"
+  "Read tasks.md and complete the next unchecked task in your phase"
 ```
 
 ### Key Flags
@@ -93,7 +93,7 @@ $WORKFLOW
 
 ---
 
-Read TODO.md and complete the next unchecked task in your phase"
+Read tasks.md and complete the next unchecked task in your phase"
 ```
 
 ### Key Flags
@@ -134,7 +134,7 @@ LLM=${3:-claude}
 
 EXPERT=".noodlecrew/experts/$ROLE/EXPERT.md"
 WORKFLOW=".noodlecrew/WORKFLOW.md"
-PROMPT="Current phase: $PHASE. Read TODO.md and complete the next unchecked task."
+PROMPT="Current phase: $PHASE. Read tasks.md and complete the next unchecked task."
 
 if [ "$LLM" = "claude" ]; then
     claude -p \

@@ -28,10 +28,10 @@ Each expert has an `EXPERT.md` file that defines:
 
 When launched, an expert:
 
-1. **Receives full context** — EXPERT.md + IDEA.md + previous artifacts + TODO.md
-2. **Reads TODO.md** — Finds the next uncompleted task
+1. **Receives full context** — EXPERT.md + IDEA.md + previous artifacts + tasks.md
+2. **Reads tasks.md** — Finds the next uncompleted task
 3. **Does the work** — Creates/updates files in `docs/`
-4. **Updates state** — Marks task complete in TODO.md, updates INDEX.md
+4. **Updates state** — Marks task complete in tasks.md, updates INDEX.md
 5. **Commits to git** — `feat(phase): task description`
 6. **Ends its turn** — The loop restarts it automatically
 
@@ -45,14 +45,14 @@ The expert has **access to the filesystem and shell**. It manages its own output
 │  Receives:                                                  │
 │  ├── EXPERT.md (this file - role definition)               │
 │  ├── IDEA.md (original input)                              │
-│  ├── TODO.md (pending tasks)                               │
+│  ├── tasks.md (pending tasks)                               │
 │  ├── Previous artifacts (docs/*)                           │
 │  └── Instructions: "Do ONE task, commit, end turn"         │
 │                                                             │
 │  Does (autonomously):                                       │
-│  ├── Reads TODO.md → picks next task                       │
+│  ├── Reads tasks.md → picks next task                       │
 │  ├── Creates artifacts in docs/                            │
-│  ├── Updates TODO.md ✅                                    │
+│  ├── Updates tasks.md ✅                                    │
 │  ├── Updates INDEX.md                                      │
 │  ├── Git commit                                            │
 │  └── Ends turn                                             │
@@ -497,6 +497,6 @@ See [Marketplace](../marketplace/index.md) for publishing experts.
 ## Further Reading
 
 - [Architecture](../concepts/architecture.md) — How the autonomous execution loop works
-- [State Files](state-files.md) — INDEX.md, TODO.md, and blocker lifecycle
+- [State Files](state-files.md) — INDEX.md, tasks.md, and blocker lifecycle
 - [Project Structure](project-structure.md) — Where experts live
 - [Configuration](../guides/index.md) — Configuring experts

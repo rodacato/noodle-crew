@@ -29,79 +29,49 @@ Tu Idea (markdown)
 Prototipo + Documentación Completa
 ```
 
-Cada experto:
-- Lee el estado actual del proyecto
-- Hace UNA tarea
-- Actualiza los archivos de estado
-- Hace commit
-- Termina su turno
-
-El loop continúa hasta completar todas las fases.
-
 ---
 
-## Cómo funciona
+## Documentación
 
-### 1. Escribes tu idea
+La documentación está organizada en tres áreas:
 
-Crea un archivo `IDEA.md` con el problema, solución y usuarios:
+### Framework (El Runtime)
 
-```markdown
-# Mi SaaS de Notas
+Cómo el CLI ejecuta crews — estructura de archivos, loop de ejecución, protocolo de terminación.
 
-## Problem
-Los equipos remotos pierden contexto en sus notas...
+| Documento | Descripción |
+|-----------|-------------|
+| [Overview](framework/overview.md) | Qué garantiza el framework |
+| [Project Structure](framework/project-structure.md) | Estructura de directorios |
+| [State Files](framework/state-files.md) | INDEX.md, tasks.md, blockers |
+| [Execution Loop](framework/execution-loop.md) | El ciclo de ejecución |
+| [CLI Commands](framework/cli-commands.md) | Comandos disponibles |
 
-## Solution
-Una app de notas colaborativas con contexto automático...
+### Crew Development (Crear Crews)
 
-## Users
-- Equipos remotos de 5-20 personas
-- Product managers
-```
+Cómo crear y personalizar crews — expertos, fases, templates.
 
-### 2. El crew trabaja
+| Documento | Descripción |
+|-----------|-------------|
+| [Overview](crew-development/overview.md) | Anatomía de un crew |
+| [Expert Format](crew-development/expert-format.md) | Especificación EXPERT.md |
+| [Manifest Schema](crew-development/manifest-schema.md) | Configuración manifest.yml |
+| [Workflow File](crew-development/workflow-file.md) | Instrucciones WORKFLOW.md |
 
-Cada experto se ejecuta en secuencia:
+### Concepts (Filosofía)
 
-| Fase | Experto | Produce |
-|------|---------|---------|
-| Discovery | Product Owner | PRD, Personas, Vision |
-| Architecture | Software Architect | ADRs, Tech Stack |
-| Implementation | Developer | Specs, Changelog |
+Por qué NoodleCrew existe y cómo piensa.
 
-### 3. Obtienes artifacts
+| Documento | Descripción |
+|-----------|-------------|
+| [Philosophy](concepts/philosophy.md) | Principios de diseño |
 
-```text
-mi-proyecto/
-├── IDEA.md                 # Tu idea (INPUT)
-├── INDEX.md                # Estado resumido (visible)
-├── .noodlecrew/            # Internals (oculto)
-│   ├── manifest.yml
-│   ├── tasks.md
-│   ├── questions/
-│   └── logs/
-└── docs/                   # Artifacts generados (OUTPUT)
-    ├── discovery/
-    │   ├── prd.md
-    │   ├── personas.md
-    │   └── vision.md
-    ├── architecture/
-    │   ├── adrs/
-    │   └── tech-stack.md
-    └── implementation/
-        └── changelog.md
-```
+### Quick Start
 
-**Tres capas de archivos:**
-
-| Capa | Ubicación | Propósito |
-|------|-----------|-----------|
-| INPUT | `IDEA.md` | Tu idea |
-| STATE | `INDEX.md` + `.noodlecrew/` | Estado del crew |
-| OUTPUT | `docs/` | Artifacts generados |
-
-Cada archivo tiene commits individuales. Full audit trail.
+| Documento | Descripción |
+|-----------|-------------|
+| [Quickstart](getting-started/quickstart.md) | Tutorial de 5 minutos |
+| [Marketplace](marketplace/index.md) | Crews pre-configurados |
 
 ---
 
@@ -121,18 +91,11 @@ cd noodle-crew
 ./scripts/run-expert.sh product-owner examples/landing-saas
 ```
 
-Repite hasta completar todas las tareas de cada fase.
-
 ### Opción 2: CLI (próximamente)
 
 ```bash
-# Inicializar proyecto
 ncrew init mi-proyecto
-
-# Ejecutar el crew completo
 ncrew run
-
-# Ver estado
 ncrew status
 ```
 
@@ -147,16 +110,26 @@ ncrew status
 
 ---
 
-## Documentación
+## Arquitectura
 
-| Sección | Descripción |
-|---------|-------------|
-| [Quickstart](getting-started/quickstart.md) | Tutorial de 5 minutos |
-| [Philosophy](concepts/philosophy.md) | Por qué existe NoodleCrew |
-| [Architecture](concepts/architecture.md) | Cómo funciona el loop |
-| [Configuration](guides/index.md) | Configurar expertos y fases |
-| [Expert Format](reference/expert-format.md) | Especificación EXPERT.md |
-| [Marketplace](marketplace/index.md) | Crews pre-configurados |
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    RESPONSIBILITY SPLIT                     │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│   FRAMEWORK                         CREW                    │
+│   ─────────                         ────                    │
+│   • Directory structure             • Expert definitions    │
+│   • State file schemas              • Phase sequence        │
+│   • Execution loop                  • Task lists            │
+│   • Termination protocol            • Templates             │
+│                                                             │
+│   "HOW it runs"                     "WHAT it runs"          │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
+```
+
+Ver [FLOW.md](../FLOW.md) para el contrato técnico completo.
 
 ---
 
@@ -170,7 +143,7 @@ ncrew status
 - [ ] Iterator automatizado
 - [ ] CLI tool
 
-Ver [DEVELOPMENT.md](https://github.com/rodacato/noodle-crew/blob/master/DEVELOPMENT.md) para el roadmap completo.
+Ver [DEVELOPMENT.md](../DEVELOPMENT.md) para el roadmap completo.
 
 ---
 

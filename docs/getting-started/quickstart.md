@@ -58,7 +58,6 @@ my-first-project/
 │   └── phases/               # Phase definitions
 ├── IDEA.md                   # Your idea goes here!
 ├── INDEX.md                  # Project state
-├── TODO.md                   # Task tracking
 ├── docs/                     # Generated documentation
 │   ├── discovery/            # PRD will be generated here
 │   ├── architecture/         # ADRs will be generated here

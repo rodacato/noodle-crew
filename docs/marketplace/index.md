@@ -72,7 +72,8 @@ When installed, your project becomes:
 my-project/
 ├── IDEA.md                       # Write your idea here!
 ├── INDEX.md                      # Project state
-├── TODO.md                       # Task tracking
+├── .noodlecrew/
+│   └── tasks.md                  # Task tracking
 ├── docs/                         # Generated output
 │   ├── discovery/
 │   ├── architecture/
