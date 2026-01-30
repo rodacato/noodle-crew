@@ -1,0 +1,25 @@
+# GitHub Pages Jekyll Configuration
+# https://docs.github.com/en/pages
+
+title: NoodleCrew
+description: Your AI product team that works while you sleep
+url: https://rodacato.github.io
+baseurl: /noodle-crew
+
+# Theme
+remote_theme: pages-themes/minimal@v0.2.0
+plugins:
+  - jekyll-remote-theme
+
+# Markdown settings
+markdown: kramdown
+kramdown:
+  input: GFM
+  hard_wrap: false
+
+# Exclude files from build
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - README.md
+  - CONTRIBUTING.md
