@@ -4,16 +4,9 @@
 
 ---
 
-## What is the Marketplace?
+## TL;DR
 
-The NoodleCrew Marketplace is a collection of pre-configured crews optimized for specific project types. Instead of configuring from scratch, start with a crew that has:
-
-- **Curated experts** for your vertical
-- **Optimized LLM assignments**
-- **Domain-specific prompts**
-- **Specialized templates**
-
-When you install a marketplace crew, it's **copied to your project** — you own it completely and can customize everything.
+The Marketplace has ready-to-use crews optimized for specific verticals. Install one, customize it, and you're ready to go. When installed, crews are **copied to your project** — you own them completely.
 
 ---
 
@@ -48,16 +41,16 @@ ncrew run
 
 ## What's in a Crew?
 
-```text
+```
 saas-b2b/
 ├── CREW.md                       # Crew overview
 ├── PHASES.md                     # Phase flow
-├── manifest.yml                    # Pre-configured settings
+├── manifest.yml                  # Configuration
+├── WORKFLOW.md                   # Expert instructions
 ├── experts/                      # Expert definitions
 │   ├── product-owner/
 │   │   ├── EXPERT.md
 │   │   └── templates/
-│   │       └── prd.md
 │   └── security-reviewer/        # Additional expert
 │       ├── EXPERT.md
 │       └── templates/
@@ -66,29 +59,27 @@ saas-b2b/
     └── architecture/PHASE.md
 ```
 
-When installed, your project becomes:
+---
 
-```text
+## After Installation
+
+Your project becomes:
+
+```
 my-project/
 ├── IDEA.md                       # Write your idea here!
 ├── INDEX.md                      # Project state
-├── .noodlecrew/
-│   └── tasks.md                  # Task tracking
+├── .noodlecrew/                  # Crew (your copy)
+│   ├── manifest.yml
+│   ├── experts/
+│   └── phases/
 ├── docs/                         # Generated output
-│   ├── discovery/
-│   ├── architecture/
-│   └── implementation/
-├── questions/                    # Blockers needing input
-└── .noodlecrew/                  # Crew configuration
-    ├── manifest.yml
-    ├── experts/
-    ├── phases/
-    └── logs/
+└── questions/                    # Blockers (if any)
 ```
 
 ---
 
-## Customizing After Install
+## Customizing
 
 Marketplace crews are starting points. Customize freely:
 
@@ -109,7 +100,6 @@ crew:
     - role: software-architect
     - role: developer
     - role: qa-engineer           # Added
-      only: [testing, review]
 ```
 
 Then create the expert:
@@ -153,19 +143,13 @@ mkdir -p my-crew/phases/discovery
 
 Required files:
 
-```text
-my-crew/
-├── CREW.md                       # Required: manifest
-├── PHASES.md                     # Required: flow overview
-├── manifest.yml                    # Required: configuration
-├── experts/
-│   └── product-owner/
-│       ├── EXPERT.md             # Required per expert
-│       └── templates/
-│           └── prd.md
-└── phases/
-    └── discovery/PHASE.md        # Required per phase
-```
+| File | Purpose |
+|------|---------|
+| `CREW.md` | Metadata and description |
+| `manifest.yml` | Configuration |
+| `WORKFLOW.md` | Expert instructions |
+| `experts/*/EXPERT.md` | Role definitions |
+| `phases/*/PHASE.md` | Phase definitions |
 
 ### CREW.md Format
 
@@ -194,33 +178,7 @@ tags: [your, tags]
 - Project type B
 
 ## Usage
-\`\`\`bash
 ncrew init my-project --crew my-custom-crew
-\`\`\`
-```
-
-### EXPERT.md Format
-
-```markdown
-# Product Owner
-
-## Role
-You are a Product Owner specialized in [domain].
-
-## Responsibilities
-- Define product vision
-- Create user personas
-- Write PRD with clear scope
-
-## Context
-You will receive: `IDEA.md`
-You produce: `docs/discovery/prd.md`, `docs/discovery/personas.md`
-
-## Output Format
-Use the templates in your `templates/` directory.
-
-## Domain Knowledge
-- [Relevant expertise]
 ```
 
 ---
@@ -228,8 +186,8 @@ Use the templates in your `templates/` directory.
 ## Publishing to Marketplace
 
 1. **Test it** — `ncrew init test --crew ./my-crew`
-2. **Document it** — Complete CREW.md and PHASES.md
-3. **Submit** — Open PR to NoodleCrew marketplace repo
+2. **Document it** — Complete CREW.md
+3. **Submit** — Open PR to NoodleCrew repo
 
 Requirements:
 - Complete CREW.md with all sections
@@ -241,17 +199,16 @@ Requirements:
 
 ## Troubleshooting
 
-**Crew not found?**
-```bash
-ncrew marketplace list
-```
-
-**LLM not available?**
-Install and authenticate the required CLI, or change LLM in `.noodlecrew/manifest.yml`.
-
-**Config conflict?**
-Existing config is backed up to `.noodlecrew.backup/`.
+| Problem | Solution |
+|---------|----------|
+| Crew not found | `ncrew marketplace list` |
+| LLM not available | Install CLI or change LLM in manifest.yml |
+| Config conflict | Existing config backed up to `.noodlecrew.backup/` |
 
 ---
 
-*See also: [Configuration Guide](../guides/index.md) | [Project Structure](../reference/project-structure.md)*
+## Further Reading
+
+- [Crew Development](../crew-development/overview.md) — Create custom crews
+- [Expert Format](../crew-development/expert-format.md) — EXPERT.md specification
+- [Framework Overview](../framework/overview.md) — How crews execute

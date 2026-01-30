@@ -4,9 +4,13 @@
 
 ---
 
-## Overview
+## TL;DR
 
-NoodleCrew uses a simple loop inspired by [DLP](https://github.com/edgarjs/dlp)'s "Ralph Wiggum Loop". The orchestrator doesn't parse LLM output or manage state—experts do that autonomously.
+The orchestrator runs a simple loop: **resolve context → build prompt → launch expert → log → check termination → repeat**. Experts are autonomous — they manage their own files and commits. The orchestrator just restarts them.
+
+---
+
+## The Loop at a Glance
 
 ```
 ncrew run
@@ -16,62 +20,44 @@ ncrew run
 │              EXECUTION LOOP                 │
 ├─────────────────────────────────────────────┤
 │                                             │
-│  1. RESOLVE CONTEXT                         │
-│     └── Which phase? Which expert?          │
-│                                             │
-│  2. BUILD PROMPT                            │
-│     └── Assemble context files              │
-│                                             │
-│  3. LAUNCH EXPERT                           │
-│     └── One-shot autonomous command         │
-│                                             │
-│  4. LOG & TRACK                             │
-│     └── Save output, update costs           │
-│                                             │
-│  5. CHECK TERMINATION                       │
-│     └── Done? Blocked? Continue?            │
+│  1. RESOLVE    Which phase? Which expert?   │
+│  2. BUILD      Assemble context files       │
+│  3. LAUNCH     One-shot autonomous command  │
+│  4. LOG        Save output, update costs    │
+│  5. CHECK      Done? Blocked? Continue?     │
 │                                             │
 └─────────────────────────────────────────────┘
 ```
 
 ---
 
-## Step 1: Resolve Context
+## Step-by-Step
 
-The orchestrator reads state files to determine:
+### Step 1: Resolve Context
 
-```
-Read manifest.yml
-  └── Get phase order
+Read state files to determine the current situation:
 
-Read tasks.md
-  └── Find first phase with [ ] tasks
+| Read | To Find |
+|------|---------|
+| `manifest.yml` | Phase order, expert assignments |
+| `tasks.md` | First phase with `[ ]` tasks |
+| Expert config | Which expert handles this phase |
 
-Select expert
-  └── Match expert.phase == current_phase
-```
-
----
-
-## Step 2: Build Prompt
+### Step 2: Build Prompt
 
 Assemble the expert's prompt in this order:
 
-```
-1. [ROLE]       EXPERT.md       "You are a Product Owner..."
-2. [WORKFLOW]   WORKFLOW.md     "Do ONE task, commit, end turn"
-3. [INPUT]      IDEA.md         User's original idea
-4. [STATE]      INDEX.md        Current phase, iteration
-5. [TASKS]      tasks.md        What needs to be done
-6. [CONTEXT]    docs/*          Previous artifacts
-7. [TEMPLATES]  templates/      Output formats
-```
+| Order | File | Purpose |
+|-------|------|---------|
+| 1 | `EXPERT.md` | "You are a Product Owner..." |
+| 2 | `WORKFLOW.md` | "Do ONE task, commit, end turn" |
+| 3 | `IDEA.md` | User's original idea |
+| 4 | `INDEX.md` | Current phase, iteration |
+| 5 | `tasks.md` | What needs to be done |
+| 6 | `docs/*` | Previous artifacts |
+| 7 | `templates/` | Output formats |
 
-Later sections can reference earlier ones (e.g., the expert sees IDEA.md when deciding how to approach tasks).
-
----
-
-## Step 3: Launch Expert
+### Step 3: Launch Expert
 
 Execute a one-shot command:
 
@@ -83,61 +69,36 @@ claude -p "$(cat prompt.md)" --allowedTools "Edit,Write,Bash"
 gemini --yolo < prompt.md
 ```
 
-The expert is **autonomous**. It:
+**The expert is autonomous.** It reads tasks.md, picks a task, creates artifacts, updates state, commits to git, and ends its turn.
 
-- Reads tasks.md → picks ONE task
-- Creates artifact in `docs/<phase>/`
-- Updates tasks.md (marks `[x]`)
-- Updates INDEX.md (iteration)
-- Git commits
-- Ends turn
-
-The orchestrator does NOT:
+**The orchestrator does NOT:**
 - Parse the LLM response
 - Extract artifacts
 - Update state files
 - Make git commits
 
----
-
-## Step 4: Log & Track
+### Step 4: Log & Track
 
 After the expert finishes:
 
-```
-Write log
-  └── .noodlecrew/logs/<timestamp>.log
+| Action | Location |
+|--------|----------|
+| Write log | `.noodlecrew/logs/<timestamp>.log` |
+| Increment iteration | Internal counter |
+| Add cost | If tracked |
 
-Update metrics
-  └── Increment iteration
-  └── Add cost (if tracked)
-```
+### Step 5: Check Termination
 
----
+Check conditions in priority order:
 
-## Step 5: Check Termination
-
-Check conditions in this order:
-
-```
-1. CREW_COMPLETE exists?
-   └── YES → EXIT success
-
-2. questions/ has status: pending?
-   └── YES → PAUSE (awaiting user)
-
-3. Phase in human_gates AND just completed?
-   └── YES → PAUSE (awaiting review)
-
-4. iteration >= max_iterations?
-   └── YES → EXIT safety
-
-5. cost >= max_cost?
-   └── YES → EXIT budget
-
-6. Otherwise
-   └── LOOP (back to step 1)
-```
+| Check | If True |
+|-------|---------|
+| `CREW_COMPLETE` exists? | EXIT success |
+| `questions/` has `status: pending`? | PAUSE for user |
+| Phase in `human_gates` AND just completed? | PAUSE for review |
+| `iteration >= max_iterations`? | EXIT safety |
+| `cost >= max_cost`? | EXIT budget |
+| Otherwise | LOOP to step 1 |
 
 ---
 
@@ -180,7 +141,7 @@ The orchestrator just restarts the loop. Simple.
 
 When all tasks in a phase are `[x]`:
 
-1. Expert updates tasks.md status: `✅ COMPLETE`
+1. Expert updates tasks.md status: `COMPLETE`
 2. Next iteration selects next phase
 3. Different expert starts working
 
@@ -211,7 +172,7 @@ Flow:
 
 ---
 
-## Iteration Example
+## Concrete Example
 
 ```
 Iteration 42:
@@ -253,4 +214,4 @@ These prevent runaway execution.
 
 - [State Files](state-files.md) — File format specifications
 - [Project Structure](project-structure.md) — Directory layout
-- [FLOW.md](../../FLOW.md) — Complete technical contract
+- [CLI Commands](cli-commands.md) — Available commands

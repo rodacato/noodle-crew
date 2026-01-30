@@ -1,192 +1,213 @@
-# CLI Integration
+# CLI Commands
 
-> How to execute experts using gemini-cli and claude-code in one-shot mode.
-
----
-
-## Overview
-
-NoodleCrew's orchestrator launches experts as one-shot CLI commands. Each expert receives:
-
-- Context files (IDEA.md, tasks.md, previous artifacts)
-- System prompt (EXPERT.md + WORKFLOW.md)
-- A task instruction
-
-The CLI executes and returns, then the orchestrator checks state and loops.
+> Available ncrew commands and LLM integration details.
 
 ---
 
-## Claude Code (v2.1.22)
+## TL;DR
 
-### Basic One-Shot
+`ncrew` wraps existing AI CLIs (Claude Code, Gemini). You don't need new API keys — just your existing subscriptions. The CLI handles prompt assembly, expert launching, and state management.
+
+---
+
+## Quick Reference
+
+| Command | Purpose |
+|---------|---------|
+| `ncrew init <name>` | Create new project |
+| `ncrew run` | Execute the crew |
+| `ncrew status` | Show current state |
+| `ncrew resume` | Continue after pause |
+| `ncrew logs` | View execution history |
+
+---
+
+## Commands
+
+### ncrew init
+
+Create a new project with a crew configuration.
 
 ```bash
-claude -p "Your prompt here"
+# Default crew
+ncrew init my-project
+
+# Marketplace crew
+ncrew init my-project --crew saas-b2b
+
+# List available crews
+ncrew marketplace list
 ```
 
-### Full Expert Invocation
+**Creates:**
+```
+my-project/
+├── IDEA.md
+├── INDEX.md
+├── .noodlecrew/
+└── docs/
+```
+
+### ncrew run
+
+Execute the crew from current state.
 
 ```bash
-claude -p \
-  --append-system-prompt-file .noodlecrew/experts/product-owner/EXPERT.md \
-  --append-system-prompt-file .noodlecrew/WORKFLOW.md \
-  --output-format json \
-  --max-turns 10 \
-  "Read tasks.md and complete the next unchecked task in your phase"
+ncrew run
+
+# With options
+ncrew run --max-iterations 50
+ncrew run --max-cost 10.00
+ncrew run --dry-run  # Show what would happen
 ```
 
-### Key Flags
+### ncrew status
+
+Show current project state.
+
+```bash
+ncrew status
+```
+
+Output:
+```
+Project: my-project
+Phase: architecture (2/3)
+Progress: 5/9 tasks
+Iteration: 42/100
+Cost: $8.47 / $30.00
+Status: in_progress
+```
+
+### ncrew resume
+
+Continue after a pause (blocker or human gate).
+
+```bash
+# Answer blocker first, then:
+ncrew resume
+```
+
+### ncrew logs
+
+View execution history.
+
+```bash
+ncrew logs           # Latest log
+ncrew logs --all     # All logs
+ncrew logs --tail 50 # Last 50 lines
+```
+
+---
+
+## LLM Integration
+
+NoodleCrew wraps existing AI CLIs. No new API keys needed.
+
+### Supported LLMs
+
+| Config Value | CLI Used | Best For |
+|--------------|----------|----------|
+| `claude` | Claude Code | General purpose |
+| `claude-opus-4.5` | Claude Code | Complex reasoning |
+| `gemini-2.5-flash` | Gemini CLI | Fast iterations |
+| `gemini-2.5-pro` | Gemini CLI | Complex analysis |
+
+### How It Works
+
+Under the hood, `ncrew run` executes:
+
+```bash
+# Claude
+claude -p "$(cat prompt.md)" --allowedTools "Edit,Write,Bash"
+
+# Gemini
+gemini --yolo < prompt.md
+```
+
+### Claude Code Flags
 
 | Flag | Purpose |
-| ---- | ------- |
-| `-p` | Non-interactive mode (required) |
-| `--append-system-prompt-file` | Inject EXPERT.md + WORKFLOW.md |
-| `--output-format json` | Structured output for parsing |
-| `--max-turns N` | Limit iterations (safety) |
-| `--permission-mode plan` | Analysis only, no modifications |
-| `--dangerously-skip-permissions` | Auto-approve all (CI/CD only) |
-| `--max-budget-usd N` | Cost limit |
-| `--model sonnet\|opus\|haiku` | Model selection |
-| `--add-dir PATH` | Include additional directories |
-
-### JSON Output Structure
-
-```json
-{
-  "type": "result",
-  "result": "Task output...",
-  "session_id": "uuid",
-  "total_cost_usd": 0.04,
-  "num_turns": 3
-}
-```
-
-### Parsing
-
-```bash
-claude -p --output-format json "Task" | jq -r '.result'
-claude -p --output-format json "Task" | jq -r '.total_cost_usd'
-```
-
----
-
-## Gemini CLI (v0.24.0)
-
-### Basic One-Shot
-
-```bash
-gemini "Your prompt here"
-```
-
-### Full Expert Invocation
-
-```bash
-# Gemini requires concatenating system prompt into the prompt
-EXPERT=$(cat .noodlecrew/experts/product-owner/EXPERT.md)
-WORKFLOW=$(cat .noodlecrew/WORKFLOW.md)
-
-gemini --yolo --output-format json "$EXPERT
-
----
-
-$WORKFLOW
-
----
-
-Read tasks.md and complete the next unchecked task in your phase"
-```
-
-### Key Flags
-
-| Flag | Purpose |
-| ---- | ------- |
-| (positional) | Prompt text (required) |
-| `--yolo` | Auto-approve all actions |
-| `--approval-mode` | `auto_edit`, `yolo`, `default` |
+|------|---------|
+| `-p` | Non-interactive mode |
+| `--append-system-prompt-file` | Inject EXPERT.md |
 | `--output-format json` | Structured output |
-| `--include-directories PATH` | Add context dirs |
+| `--max-turns N` | Iteration limit |
+| `--max-budget-usd N` | Cost limit |
+
+### Gemini CLI Flags
+
+| Flag | Purpose |
+|------|---------|
+| `--yolo` | Auto-approve actions |
+| `--output-format json` | Structured output |
 | `-m MODEL` | Model selection |
-| `-s, --sandbox` | Sandboxed execution |
 
 ---
 
-## Comparison
+## Manual Execution
 
-| Feature | Claude Code | Gemini CLI |
-| ------- | ----------- | ---------- |
-| One-shot flag | `-p` | positional |
-| System prompt file | `--append-system-prompt-file` | Concatenate manually |
-| Auto-approve | `--dangerously-skip-permissions` | `--yolo` |
-| JSON output | `--output-format json` | `--output-format json` |
-| Cost in response | Yes | No |
-
----
-
-## Orchestrator Script
+Run experts manually without the full CLI:
 
 ```bash
-#!/bin/bash
-# run-expert.sh <role> <phase> [llm]
+# See what would be sent
+./scripts/run-expert.sh product-owner examples/my-idea --dry-run
 
-ROLE=$1
-PHASE=$2
-LLM=${3:-claude}
-
-EXPERT=".noodlecrew/experts/$ROLE/EXPERT.md"
-WORKFLOW=".noodlecrew/WORKFLOW.md"
-PROMPT="Current phase: $PHASE. Read tasks.md and complete the next unchecked task."
-
-if [ "$LLM" = "claude" ]; then
-    claude -p \
-        --append-system-prompt-file "$EXPERT" \
-        --append-system-prompt-file "$WORKFLOW" \
-        --output-format json \
-        --max-turns 10 \
-        "$PROMPT"
-else
-    gemini --yolo --output-format json \
-        "$(cat $EXPERT)
----
-$(cat $WORKFLOW)
----
-$PROMPT"
-fi
+# Execute
+./scripts/run-expert.sh product-owner examples/my-idea
 ```
 
-Usage:
+### Script Usage
 
 ```bash
-./run-expert.sh product-owner discovery claude
-./run-expert.sh software-architect architecture gemini
+./scripts/run-expert.sh <role> <project-dir> [--dry-run]
 ```
+
+| Argument | Description |
+|----------|-------------|
+| `role` | Expert name (e.g., `product-owner`) |
+| `project-dir` | Path to project |
+| `--dry-run` | Show prompt without executing |
 
 ---
 
-## Testing
+## Environment Variables
 
-### Claude
+Override configuration via environment:
+
+```bash
+NOODLECREW_DEFAULT_LLM=gemini ncrew run
+NOODLECREW_MAX_ITERATIONS=50 ncrew run
+NOODLECREW_MAX_COST=10 ncrew run
+```
+
+| Variable | Overrides |
+|----------|-----------|
+| `NOODLECREW_DEFAULT_LLM` | `crew.default_llm` |
+| `NOODLECREW_MAX_ITERATIONS` | `execution.max_iterations` |
+| `NOODLECREW_MAX_COST` | `execution.max_cost` |
+
+---
+
+## Testing Your Setup
+
+### Claude Code
 
 ```bash
 # Simple test
 claude -p "Say hello"
 
-# With JSON
+# With JSON output
 claude -p --output-format json "What is 2+2?" | jq .
-
-# With system prompt
-claude -p --append-system-prompt "You are a pirate" "Say hello"
 ```
 
-### Gemini
+### Gemini CLI
 
 ```bash
 # Simple test
 gemini "Say hello"
 
-# With JSON
-gemini --output-format json "What is 2+2?"
-
-# With yolo
+# With yolo mode
 gemini --yolo "List files in current directory"
 ```
 
@@ -194,6 +215,6 @@ gemini --yolo "List files in current directory"
 
 ## Further Reading
 
-- [Architecture](../concepts/architecture.md) — The execution loop
-- [Workflow Definition](../../marketplace/default/WORKFLOW.md) — Expert instructions
-- [Expert Format](expert-format.md) — EXPERT.md specification
+- [Execution Loop](execution-loop.md) — How the loop works
+- [Manifest Schema](../crew-development/manifest-schema.md) — Configuration options
+- [Expert Format](../crew-development/expert-format.md) — EXPERT.md specification

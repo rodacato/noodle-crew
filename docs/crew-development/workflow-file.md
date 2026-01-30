@@ -4,16 +4,9 @@
 
 ---
 
-## Overview
+## TL;DR
 
-`WORKFLOW.md` contains the execution instructions that every expert receives. It defines:
-
-- How to read and update tasks
-- How to create artifacts
-- How to manage state
-- How to commit changes
-
-This file is **crew-specific** but must follow framework conventions.
+`WORKFLOW.md` contains execution instructions for all experts: how to read tasks, create artifacts, update state, and commit changes. It's **crew-specific** but must follow framework conventions.
 
 ---
 
@@ -29,9 +22,21 @@ marketplace/<crew>/WORKFLOW.md
 
 ## Required Sections
 
-### Execution Model
+| Section | Purpose |
+|---------|---------|
+| Execution Model | Explains autonomous operation |
+| Your Turn | Step-by-step instructions |
+| File Locations | Where files live |
+| Decision Making | Autonomy guidelines |
+| Creating Blockers | When/how to pause |
+| Git Conventions | Commit format |
+| Termination | How to signal "done" |
 
-Explains that experts are autonomous and run in a loop.
+---
+
+## Section Templates
+
+### Execution Model
 
 ```markdown
 ## Execution Model
@@ -42,8 +47,6 @@ The orchestrator will restart you after each turn until all work is complete.
 ```
 
 ### Your Turn
-
-Step-by-step instructions for each iteration.
 
 ```markdown
 ## Your Turn
@@ -61,8 +64,6 @@ Each turn, you must:
 
 ### File Locations
 
-Table of where files live.
-
 ```markdown
 ## File Locations
 
@@ -76,8 +77,6 @@ Table of where files live.
 ```
 
 ### Decision Making
-
-Guidelines for autonomous decisions.
 
 ```markdown
 ## Decision Making
@@ -99,64 +98,31 @@ You are an expert. Make reasonable decisions based on:
 
 ### Creating Blockers
 
-When and how to create blocker files.
-
 ```markdown
-### Creating Blockers
+## Creating Blockers
 
 Create a blocker file ONLY when:
 - Requirements are genuinely contradictory
-- A decision would fundamentally change the product direction
+- A decision would fundamentally change product direction
 - Critical business/compliance information is missing
 
-To create a blocker:
+File format: `questions/{{role}}-{{number}}-{{topic}}.md`
 
-\`\`\`bash
-cat > questions/{{role}}-{{number}}-{{topic}}.md << 'EOF'
----
-from: {{role}}
-to: user
-type: blocker
-status: pending
-created: "{{timestamp}}"
----
-
-# BLOCKER: {{title}}
-
-## Context
-[Why this decision is needed]
-
-## Question
-[The specific question]
-
-## Options
-...
-
-## Recommendation
-[Your suggestion]
-
----
-
-## Your Answer (required to resume)
-
-**Decision**: ___
-**Reason**: ___
-EOF
-\`\`\`
+Include:
+- Context (why this decision is needed)
+- Question (specific)
+- Options (with pros/cons)
+- Recommendation (your suggestion)
 ```
 
 ### Git Conventions
-
-Commit format and what to include.
 
 ```markdown
 ## Git Conventions
 
 ### Commit Format
 
-\`\`\`
 feat({{phase}}): {{brief description}}
-\`\`\`
 
 Examples:
 - `feat(discovery): generate PRD from idea`
@@ -171,25 +137,19 @@ Examples:
 
 ### Termination
 
-How to signal completion.
-
 ```markdown
 ## Termination
 
 After completing your task, check tasks.md:
 
-\`\`\`
 Are ALL tasks in ALL phases checked [x]?
 ├── YES → touch CREW_COMPLETE && end turn
 └── NO  → end turn (loop restarts you or next expert)
-\`\`\`
 ```
 
 ---
 
 ## Template Variables
-
-Use these placeholders in WORKFLOW.md:
 
 | Variable | Description |
 |----------|-------------|
@@ -197,22 +157,12 @@ Use these placeholders in WORKFLOW.md:
 | `{{role}}` | Current expert role |
 | `{{task}}` | Current task description |
 | `{{timestamp}}` | ISO datetime |
-| `{{number}}` | Sequential number |
-| `{{topic}}` | Blocker topic (kebab-case) |
-
----
-
-## Complete Example
-
-See [marketplace/default/WORKFLOW.md](../../marketplace/default/WORKFLOW.md) for the full default implementation.
 
 ---
 
 ## Customization
 
-### Adding Crew-Specific Rules
-
-Add sections for your domain:
+### Adding Domain Rules
 
 ```markdown
 ## Domain Guidelines
@@ -224,35 +174,19 @@ Add sections for your domain:
 - Document audit trail requirements
 ```
 
-### Changing Task Selection
-
-Default is first unchecked. For priority-based:
-
-```markdown
-## Your Turn
-
-1. **Read tasks.md** — Find the highest priority unchecked task
-   - Priority indicated by `[!]` prefix
-   - If no priority markers, use first unchecked
-```
-
 ### Custom Commit Format
-
-For teams with different conventions:
 
 ```markdown
 ## Git Conventions
 
 ### Commit Format
 
-\`\`\`
 [NOODLE-{{iteration}}] {{task}} ({{phase}})
-\`\`\`
 ```
 
 ---
 
-## Validation
+## Validation Checklist
 
 A valid WORKFLOW.md must include:
 
@@ -270,4 +204,4 @@ A valid WORKFLOW.md must include:
 
 - [Crew Overview](overview.md) — Crew anatomy
 - [Expert Format](expert-format.md) — EXPERT.md specification
-- [Framework Execution Loop](../framework/execution-loop.md) — How the loop works
+- [Execution Loop](../framework/execution-loop.md) — How the loop works

@@ -1,16 +1,27 @@
-# Crew Development Overview
+# Crew Development
 
 > How to create and customize crews.
 
 ---
 
-## What is a Crew?
+## TL;DR
 
-A **crew** is a package of experts, phases, and configuration that defines *what* gets done. The [framework](../framework/overview.md) handles *how* it runs.
+A **crew** is a package of experts, phases, and templates that defines *what* gets done. The framework handles *how* it runs. Start from the default crew and customize, or build your own from scratch.
 
 ```
-CREW = Experts + Phases + Tasks + Config
+CREW = Experts + Phases + Tasks + Templates + Config
 ```
+
+---
+
+## Quick Navigation
+
+| I want to... | Go to |
+|--------------|-------|
+| Define an expert | [Expert Format](expert-format.md) |
+| Configure manifest.yml | [Manifest Schema](manifest-schema.md) |
+| Write workflow instructions | [Workflow File](workflow-file.md) |
+| Publish to marketplace | [Marketplace](../marketplace/index.md) |
 
 ---
 
@@ -21,7 +32,7 @@ marketplace/<crew-name>/
 ├── manifest.yml          # Configuration
 ├── CREW.md               # Metadata and description
 ├── PHASES.md             # Phase overview
-├── WORKFLOW.md           # Instructions for experts
+├── WORKFLOW.md           # Instructions for all experts
 ├── experts/              # Expert definitions
 │   └── <role>/
 │       ├── EXPERT.md     # Role definition
@@ -39,59 +50,12 @@ marketplace/<crew-name>/
 
 ## Key Files
 
-### manifest.yml
-
-The crew's configuration. Defines experts, phases, LLMs, and execution settings.
-
-```yaml
-project:
-  name: "my-crew"
-  type: "saas"
-
-crew:
-  default_llm: claude
-  experts:
-    - role: product-owner
-      phase: discovery
-    - role: software-architect
-      phase: architecture
-
-phases:
-  - discovery
-  - architecture
-
-execution:
-  max_iterations: 100
-
-validation:
-  human_gates: []
-```
-
-See [Manifest Schema](manifest-schema.md) for full reference.
-
-### WORKFLOW.md
-
-Instructions injected into every expert's prompt. Defines:
-
-- How to read tasks
-- How to create artifacts
-- How to update state
-- How to commit changes
-
-This file is **crew-specific** but follows framework conventions.
-
-See [Workflow File](workflow-file.md) for details.
-
-### EXPERT.md
-
-Each expert has an `EXPERT.md` that defines:
-
-- Role (who you are)
-- Responsibilities (what you do)
-- Output format (how to structure artifacts)
-- Decision guidelines (how to think)
-
-See [Expert Format](expert-format.md) for specification.
+| File | Purpose |
+|------|---------|
+| `manifest.yml` | Experts, phases, LLMs, execution settings |
+| `WORKFLOW.md` | Instructions injected into every expert |
+| `EXPERT.md` | Role definition for each expert |
+| `templates/` | Output formats for artifacts |
 
 ---
 
@@ -111,14 +75,18 @@ project:
   type: "custom"
 
 crew:
+  default_llm: claude
   experts:
     - role: my-expert
       phase: my-phase
+
+phases:
+  - my-phase
 ```
 
 ### 3. Create Expert
 
-```
+```bash
 mkdir -p marketplace/my-crew/experts/my-expert/templates
 ```
 
@@ -160,11 +128,7 @@ status: draft
 
 ### 5. Define Phase
 
-```
-mkdir -p marketplace/my-crew/phases/my-phase
-```
-
-Write `PHASE.md`:
+Write `phases/my-phase/PHASE.md`:
 
 ```markdown
 # My Phase
@@ -224,28 +188,34 @@ experts/
 
 ### Expert Design
 
-1. **Single responsibility** — One expert, one domain
-2. **Opinionated defaults** — Make decisions, document rationale
-3. **Clear outputs** — Explicit templates with all sections
-4. **Minimal blockers** — Only ask for genuine ambiguity
+| Principle | Description |
+|-----------|-------------|
+| Single responsibility | One expert, one domain |
+| Opinionated defaults | Make decisions, document rationale |
+| Clear outputs | Explicit templates with all sections |
+| Minimal blockers | Only ask for genuine ambiguity |
 
 ### Phase Design
 
-1. **Sequential dependencies** — Later phases read earlier artifacts
-2. **Clear boundaries** — No overlap between phase outputs
-3. **Atomic tasks** — Each task produces one artifact
+| Principle | Description |
+|-----------|-------------|
+| Sequential dependencies | Later phases read earlier artifacts |
+| Clear boundaries | No overlap between phase outputs |
+| Atomic tasks | Each task produces one artifact |
 
 ### Task Design
 
-1. **Specific** — "Generate PRD" not "Do product work"
-2. **Completable** — Can be done in one turn
-3. **Verifiable** — Clear when done
+| Principle | Description |
+|-----------|-------------|
+| Specific | "Generate PRD" not "Do product work" |
+| Completable | Can be done in one turn |
+| Verifiable | Clear when done |
 
 ---
 
 ## Publishing to Marketplace
 
-1. Ensure all files present
+1. Ensure all required files present
 2. Add `CREW.md` with description
 3. Test with `ncrew init <project> --crew <your-crew>`
 4. Submit PR to `marketplace/`

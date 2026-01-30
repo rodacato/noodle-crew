@@ -4,38 +4,54 @@
 
 ---
 
-## Overview
+## TL;DR
 
-When you run `ncrew init <project-name>`, NoodleCrew creates a structured project folder designed for autonomous execution and human auditability.
+NoodleCrew organizes files into **three layers**: INPUT (your idea), STATE (crew internals), and OUTPUT (generated docs). The separation keeps your deliverables clean while the system manages its own complexity.
 
-```text
-<project-name>/
-├── IDEA.md                           # Your idea (INPUT - visible)
-├── INDEX.md                          # Project status summary (STATE - visible)
+```
+my-project/
+├── IDEA.md              # INPUT  — You write this
+├── INDEX.md             # STATE  — Visible status summary
+├── .noodlecrew/         # STATE  — Hidden internals
+└── docs/                # OUTPUT — Clean deliverables
+```
+
+---
+
+## Quick Reference
+
+| I want to... | Look at |
+|--------------|---------|
+| Write my idea | `IDEA.md` |
+| Check progress | `INDEX.md` |
+| See generated artifacts | `docs/` |
+| Configure the crew | `.noodlecrew/manifest.yml` |
+| Answer a blocker question | `.noodlecrew/questions/` |
+| Debug execution | `.noodlecrew/logs/` |
+
+---
+
+## Full Directory Layout
+
+```
+my-project/
+├── IDEA.md                           # Your idea (INPUT)
+├── INDEX.md                          # Status summary (STATE - visible)
 │
-├── .noodlecrew/                      # Crew internals (hidden)
-│   ├── manifest.yml                  # Crew configuration
-│   ├── tasks.md                      # Detailed task tracking
+├── .noodlecrew/                      # Crew internals (STATE - hidden)
+│   ├── manifest.yml                  # Configuration
+│   ├── tasks.md                      # Task tracking
 │   ├── experts/                      # Expert definitions
 │   │   ├── product-owner/
 │   │   │   ├── EXPERT.md
 │   │   │   └── templates/
 │   │   ├── software-architect/
-│   │   │   ├── EXPERT.md
-│   │   │   └── templates/
 │   │   └── developer/
-│   │       ├── EXPERT.md
-│   │       └── templates/
 │   ├── phases/                       # Phase definitions
-│   │   ├── discovery/PHASE.md
-│   │   ├── architecture/PHASE.md
-│   │   └── implementation/PHASE.md
 │   ├── questions/                    # Blocker questions
-│   │   └── architect-001-auth.md
 │   └── logs/                         # Execution history
-│       └── 2026-01-28-143522.log
 │
-└── docs/                             # Generated artifacts (OUTPUT - visible)
+└── docs/                             # Generated artifacts (OUTPUT)
     ├── discovery/
     │   ├── prd.md
     │   ├── personas.md
@@ -44,28 +60,25 @@ When you run `ncrew init <project-name>`, NoodleCrew creates a structured projec
     │   ├── adrs/
     │   │   ├── 001-frontend.md
     │   │   └── 002-database.md
-    │   ├── architecture.md
-    │   └── tech-stack.md
+    │   └── architecture.md
     └── implementation/
-        ├── changelog.md              # Changelog del PRODUCTO
+        ├── changelog.md
         └── implementation-notes.md
 ```
 
 ---
 
-## Three Layers of Files
-
-NoodleCrew separates files into three distinct layers:
+## The Three Layers
 
 | Layer | Location | Purpose | Who Modifies |
 |-------|----------|---------|--------------|
-| **INPUT** | `IDEA.md` (root) | Your idea | User |
-| **STATE** | `INDEX.md` (root) + `.noodlecrew/` | Crew status and internals | Crew |
-| **OUTPUT** | `docs/` | Generated artifacts | Crew |
+| **INPUT** | `IDEA.md` | Your idea | You |
+| **STATE** | `INDEX.md` + `.noodlecrew/` | Crew status | Crew |
+| **OUTPUT** | `docs/` | Deliverables | Crew |
 
 ### Why This Separation?
 
-1. **INPUT is visible** — Your idea is the entry point, always accessible
+1. **INPUT is visible** — Your idea is the entry point, always at the root
 2. **STATE is summarized** — `INDEX.md` shows status; details hidden in `.noodlecrew/`
 3. **OUTPUT is clean** — `docs/` contains only deliverables, no system files
 
@@ -75,11 +88,9 @@ NoodleCrew separates files into three distinct layers:
 
 ### IDEA.md
 
-**Purpose:** Your idea — the entry point for the crew.
+Your idea — the entry point for the crew.
 
-**Location:** Project root (visible!)
-
-**Created by:** User or `ncrew init`
+**Location:** Project root
 
 **Minimal structure:**
 
@@ -96,7 +107,7 @@ NoodleCrew separates files into three distinct layers:
 [Who is this for?]
 ```
 
-The crew reads this file to understand what to build.
+The crew reads this to understand what to build.
 
 ---
 
@@ -104,223 +115,87 @@ The crew reads this file to understand what to build.
 
 ### INDEX.md (Visible Summary)
 
-**Purpose:** Human-readable status summary. Shows phase, progress, and cost at a glance.
+Human-readable status at a glance.
 
-**Location:** Project root (visible!)
+**Location:** Project root
 
-**Modified by:** Crew (automatically during execution)
-
-```markdown
+```yaml
 ---
 type: project
 status: in_progress
 current_phase: architecture
 current_iteration: 42
 cost_so_far: 8.47
-created: "2026-01-28"
-updated: "2026-01-28T14:52:33Z"
 ---
+```
 
+```markdown
 # My Project
 
 ## Status
-
 - **Phase:** Architecture (2/3)
 - **Progress:** 5/9 tasks complete
 - **Iteration:** 42/100
-- **Cost:** $8.47 / $30.00
 
 ## Recent Activity
-
 - [x] docs/discovery/prd.md
 - [x] docs/discovery/personas.md
 - [ ] docs/architecture/adrs/001-frontend.md (in progress)
-
-## Blockers
-
-None currently.
 ```
 
 ### .noodlecrew/ (Hidden Internals)
 
-**Purpose:** All crew configuration and detailed state. Hidden to reduce noise.
+All crew configuration and detailed state.
 
-**Structure:**
-
-```text
-.noodlecrew/
-├── manifest.yml          # Crew configuration
-├── tasks.md              # Detailed task backlog
-├── experts/              # Expert definitions
-├── phases/               # Phase definitions
-├── questions/            # Blocker questions
-└── logs/                 # Execution history
-```
+| Directory | Purpose |
+|-----------|---------|
+| `manifest.yml` | Crew configuration |
+| `tasks.md` | Detailed task backlog |
+| `experts/` | Expert definitions |
+| `phases/` | Phase definitions |
+| `questions/` | Blocker questions |
+| `logs/` | Execution history |
 
 ### .noodlecrew/tasks.md
 
-**Purpose:** Detailed task backlog per phase. The crew reads this to know what to do next.
+Task backlog the crew reads to know what to do next:
 
 ```markdown
----
-project: my-project
-updated: "2026-01-28"
----
-
-# Tasks
-
-## Discovery Phase - COMPLETE
-
+## Discovery Phase ✅ COMPLETE
 - [x] Generate PRD from IDEA.md
 - [x] Define user personas
-- [x] Create product vision
 
-## Architecture Phase - IN PROGRESS
-
+## Architecture Phase 🔄 IN PROGRESS
 - [x] ADR-001: Frontend framework
 - [ ] ADR-002: Database choice
-- [ ] ADR-003: Authentication strategy
-- [ ] Create architecture overview
+- [ ] ADR-003: Authentication
 
-## Implementation Phase - PENDING
-
-- [ ] Generate CHANGELOG structure
+## Implementation Phase ⏳ PENDING
+- [ ] Generate CHANGELOG
 - [ ] Document implementation steps
 ```
 
 ### .noodlecrew/questions/
 
-**Purpose:** Blocker questions requiring human input.
-
-**File format:** `{expert}-{number}-{topic}.md`
+Blocker questions requiring your input:
 
 ```markdown
 ---
 from: software-architect
-to: user
 type: blocker
 status: pending
-created: "2026-01-28"
 ---
 
 # BLOCKER: Authentication Strategy
 
-## Context
-The PRD mentions "enterprise SSO" but doesn't specify...
-
 ## Question
 Should we support SAML, OIDC, or both?
 
-## Options
-- **Option A:** SAML only (enterprise standard)
-- **Option B:** OIDC only (modern, easier)
-- **Option C:** Both (maximum compatibility)
-
 ## Your Answer
 **Decision:** ___
-**Reason:** ___
 ```
 
 When you answer and run `ncrew resume`, execution continues.
-
-### .noodlecrew/logs/
-
-**Purpose:** Execution history for debugging and auditing.
-
-**Files:** `YYYY-MM-DD-HHMMSS.log`
-
-```text
-[2026-01-28 14:35:22] INFO: Starting iteration 1/100
-[2026-01-28 14:35:22] INFO: Phase: discovery
-[2026-01-28 14:35:22] INFO: Expert: product-owner
-[2026-01-28 14:35:45] INFO: Response received (3,847 tokens)
-[2026-01-28 14:35:46] INFO: Created: docs/discovery/prd.md
-[2026-01-28 14:35:47] INFO: Git commit: feat(discovery): generate PRD
-```
-
----
-
-## Crew Configuration
-
-### .noodlecrew/manifest.yml
-
-**Purpose:** Crew manifest — declares experts, LLM settings, phases, gates.
-
-```yaml
-project:
-  name: "my-project"
-  type: "saas"
-
-crew:
-  default_llm: claude
-  experts:
-    - role: product-owner
-      phase: discovery
-    - role: software-architect
-      phase: architecture
-    - role: developer
-      phase: implementation
-
-phases:
-  - discovery
-  - architecture
-  - implementation
-
-execution:
-  max_iterations: 100
-  max_cost: 30.00
-
-validation:
-  human_gates:
-    - architecture    # Pause after architecture for review
-```
-
-See [Configuration Guide](../guides/index.md) for all options.
-
-### .noodlecrew/experts/
-
-**Purpose:** Self-contained expert units.
-
-```text
-experts/
-├── product-owner/
-│   ├── EXPERT.md           # Role definition
-│   └── templates/
-│       ├── prd.md          # PRD template
-│       ├── personas.md
-│       └── vision.md
-├── software-architect/
-│   ├── EXPERT.md
-│   └── templates/
-│       ├── adr.md
-│       ├── architecture.md
-│       └── tech-stack.md
-└── developer/
-    ├── EXPERT.md
-    └── templates/
-        ├── changelog.md
-        └── implementation-notes.md
-```
-
-See [Expert Format](expert-format.md) for EXPERT.md specification.
-
-### .noodlecrew/phases/
-
-**Purpose:** Phase definitions.
-
-```text
-phases/
-├── discovery/PHASE.md
-├── architecture/PHASE.md
-└── implementation/PHASE.md
-```
-
-Each PHASE.md defines:
-- Purpose of the phase
-- Which expert handles it
-- Tasks to complete
-- Success criteria
-- Transition rules
 
 ---
 
@@ -328,26 +203,23 @@ Each PHASE.md defines:
 
 ### docs/
 
-**Purpose:** All generated documentation. Clean, deliverable artifacts.
+All generated artifacts. Clean and deliverable.
 
-```text
+```
 docs/
 ├── discovery/              # Product Owner outputs
-│   ├── prd.md              # Product Requirements Document
+│   ├── prd.md              # Product Requirements
 │   ├── personas.md         # User personas
 │   └── vision.md           # Product vision
-├── architecture/           # Software Architect outputs
-│   ├── adrs/               # Architecture Decision Records
-│   │   ├── 001-frontend.md
-│   │   └── 002-database.md
-│   ├── architecture.md     # System overview
-│   └── tech-stack.md       # Technology choices
+├── architecture/           # Architect outputs
+│   ├── adrs/               # Decision Records
+│   └── architecture.md     # System overview
 └── implementation/         # Developer outputs
     ├── changelog.md        # Product changelog
     └── implementation-notes.md
 ```
 
-**Important:** `docs/implementation/changelog.md` is the changelog **of the product being built**, not the crew execution log. Crew logs are in `.noodlecrew/logs/`.
+**Note:** `docs/implementation/changelog.md` is the changelog of *the product being built*, not the crew execution log.
 
 ---
 
@@ -355,59 +227,52 @@ docs/
 
 | File | Created By | Modified By | Visibility |
 |------|------------|-------------|------------|
-| `IDEA.md` | User | User | Visible |
+| `IDEA.md` | You | You | Visible |
 | `INDEX.md` | `ncrew init` | Crew | Visible |
-| `.noodlecrew/manifest.yml` | `ncrew init` | User | Hidden |
+| `.noodlecrew/manifest.yml` | `ncrew init` | You | Hidden |
 | `.noodlecrew/tasks.md` | `ncrew init` | Crew | Hidden |
-| `.noodlecrew/experts/` | `ncrew init` | User | Hidden |
-| `.noodlecrew/questions/` | Crew | User (answers) | Hidden |
-| `.noodlecrew/logs/` | Crew | — | Hidden |
+| `.noodlecrew/questions/` | Crew | You (answers) | Hidden |
 | `docs/*` | Crew | Crew | Visible |
 
 ---
 
-## Marketplace vs Installed
+## Marketplace Crews
 
-When you install a crew from the marketplace:
+When you install a marketplace crew:
 
 ```bash
 ncrew init my-project --crew saas-b2b
 ```
 
-The crew package is copied from `marketplace/` to `.noodlecrew/`:
+The crew package is **copied** to your project:
 
-```text
-marketplace/saas-b2b/       →    .noodlecrew/
-├── manifest.yml                 ├── manifest.yml
-├── experts/                     ├── experts/
-└── phases/                      └── phases/
+```
+marketplace/saas-b2b/  →  .noodlecrew/
+├── manifest.yml           ├── manifest.yml
+├── experts/               ├── experts/
+└── phases/                └── phases/
 ```
 
-This means:
-- `marketplace/` contains distributable crew packages
-- `.noodlecrew/` contains the installed crew for your project
-- You can customize `.noodlecrew/` without affecting the original package
+You own the copy. Customize freely.
 
 ---
 
 ## Git Integration
 
-Every iteration creates a git commit:
+Every iteration creates a commit:
 
 ```
 feat(discovery): generate PRD
 feat(discovery): define user personas
 feat(architecture): ADR-001 frontend stack
-...
 ```
 
-**Commit format:** `feat(<phase>): <task description>`
+Full audit trail in git history.
 
 ---
 
 ## Further Reading
 
-- [Configuration Guide](../guides/index.md) — manifest.yml options
-- [Expert Format](expert-format.md) — EXPERT.md specification
-- [State Files](state-files.md) — INDEX.md, tasks.md, and blocker lifecycle
-- [Architecture](../concepts/architecture.md) — How the execution loop works
+- [State Files](state-files.md) — INDEX.md, tasks.md, blocker lifecycle
+- [Execution Loop](execution-loop.md) — How the loop works
+- [Framework Overview](overview.md) — What the framework provides

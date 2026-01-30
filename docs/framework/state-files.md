@@ -4,22 +4,20 @@
 
 ---
 
-## Overview
+## TL;DR
 
-NoodleCrew uses markdown files as the source of truth for project state:
+State lives in markdown files. `INDEX.md` shows visible status, `tasks.md` tracks work, `questions/` holds blockers, and `CREW_COMPLETE` signals "done". No database — just files the next expert reads.
 
-| File              | Purpose                              | Created By  | Modified By |
-|-------------------|--------------------------------------|-------------|-------------|
-| INDEX.md          | Project state (phase, iteration)     | `ncrew init`| Expert      |
-| tasks.md          | Task checklist per phase             | `ncrew init`| Expert      |
-| questions/*.md    | Blocker questions                    | Expert      | User        |
-| CREW_COMPLETE     | Termination signal                   | Expert      | —           |
+---
 
-The orchestrator reads these files to determine:
+## Quick Reference
 
-- Which expert to run (based on current phase)
-- Whether to pause (blockers, human gates)
-- Whether to terminate (CREW_COMPLETE exists, max iterations)
+| File | Purpose | Created By | Modified By |
+|------|---------|------------|-------------|
+| `INDEX.md` | Project state (phase, iteration) | `ncrew init` | Expert |
+| `tasks.md` | Task checklist per phase | `ncrew init` | Expert |
+| `questions/*.md` | Blocker questions | Expert | You |
+| `CREW_COMPLETE` | Termination signal | Expert | — |
 
 ---
 
@@ -43,22 +41,12 @@ updated: "2026-01-28T14:52:33Z"
 ---
 ```
 
-| Field             | Type    | Description                              |
-|-------------------|---------|------------------------------------------|
-| type              | string  | Always "project"                         |
-| status            | enum    | in_progress, blocked, or complete        |
-| current_phase     | string  | Active phase name                        |
-| current_iteration | integer | How many iterations have run             |
-| cost_so_far       | float   | Accumulated LLM cost in USD              |
-| created           | date    | When project was initialized             |
-| updated           | datetime| Last modification timestamp              |
-
-### Who Reads/Writes
-
-| Actor        | Reads           | Writes                           |
-|--------------|-----------------|----------------------------------|
-| Orchestrator | current_phase   | —                                |
-| Expert       | All fields      | All fields (updates after task)  |
+| Field | Type | Description |
+|-------|------|-------------|
+| `status` | enum | `in_progress`, `blocked`, or `complete` |
+| `current_phase` | string | Active phase name |
+| `current_iteration` | integer | How many iterations have run |
+| `cost_so_far` | float | Accumulated LLM cost in USD |
 
 ### State Transitions
 
@@ -80,7 +68,7 @@ status: in_progress
 
 Task checklist that experts read to find their next task.
 
-### Syntax
+### Format
 
 ```markdown
 ---
@@ -91,46 +79,35 @@ updated: "2026-01-28T14:52:33Z"
 # Tasks
 
 ## Discovery Phase ✅ COMPLETE
-
 - [x] Generate PRD from idea
 - [x] Define user personas
 
 ## Architecture Phase 🔄 IN PROGRESS
-
 - [x] ADR-001: Frontend stack
 - [ ] ADR-002: Database choice   ← Expert picks this
 - [ ] ADR-003: Authentication
 
 ## Implementation Phase ⏳ PENDING
-
 - [ ] Generate CHANGELOG
 - [ ] Document implementation steps
 ```
 
-### Phase Status Rules
+### Phase Status
 
-| Emoji | Status       | Condition                                        |
-|-------|--------------|--------------------------------------------------|
-| ✅    | COMPLETE     | All tasks checked `[x]`                          |
-| 🔄    | IN PROGRESS  | At least one checked, at least one unchecked     |
-| ⏳    | PENDING      | No tasks checked yet                             |
+| Emoji | Status | Condition |
+|-------|--------|-----------|
+| ✅ | COMPLETE | All tasks `[x]` |
+| 🔄 | IN PROGRESS | Some checked, some unchecked |
+| ⏳ | PENDING | No tasks checked yet |
 
 ### Expert Behavior
 
 1. Read tasks.md
 2. Find first phase with unchecked tasks
-3. Pick first unchecked task `[ ]` in that phase
+3. Pick first unchecked task `[ ]`
 4. Do the task
 5. Mark task as `[x]`
-6. Update phase status emoji if all tasks done
-7. If ALL tasks in ALL phases are done → `touch CREW_COMPLETE`
-
-### Orchestrator Behavior
-
-1. Check if CREW_COMPLETE exists → EXIT
-2. Check if questions/ has pending blockers → PAUSE
-3. Check human_gates in manifest.yml → PAUSE if gate reached
-4. Otherwise → select expert for current phase → LOOP
+6. If ALL tasks done → `touch CREW_COMPLETE`
 
 ---
 
@@ -138,50 +115,23 @@ updated: "2026-01-28T14:52:33Z"
 
 ### Purpose
 
-When an expert encounters genuine ambiguity, it creates a blocker file. Blockers are **rare** by design — experts are opinionated and make reasonable decisions.
+When an expert encounters genuine ambiguity, it creates a blocker. Blockers are **rare by design** — experts are opinionated and make reasonable decisions.
 
 ### When to Create a Blocker
 
-Create a blocker ONLY when:
+**Create blocker ONLY when:**
+- Requirements are contradictory
+- Critical business decision outside technical scope
+- A choice would fundamentally change product direction
 
-- The idea has contradictory requirements
-- Critical business decision is outside technical scope
-- A choice would fundamentally change the product direction
-
-Do NOT create blockers for:
-
+**Do NOT create blockers for:**
 - Preferences ("Do you prefer X or Y?")
 - Confirmations ("Is this correct?")
-- Technical details that can be reasonably assumed
-
-### Lifecycle
-
-```
-Expert detects genuine ambiguity
-         │
-         ▼
-Creates questions/architect-001-auth.md
-  status: pending
-         │
-         ▼
-Orchestrator detects file → PAUSE
-         │
-         ▼
-User writes answer in file
-  status: resolved
-         │
-         ▼
-User runs: ncrew resume
-         │
-         ▼
-Orchestrator reads resolved blocker
-Answer becomes context for next prompt
-         │
-         ▼
-Loop continues
-```
+- Details that can be reasonably assumed
 
 ### File Format
+
+**Filename:** `{expert}-{number}-{topic}.md`
 
 ```markdown
 ---
@@ -189,111 +139,92 @@ from: software-architect
 to: user
 type: blocker
 status: pending
-created: "2026-01-28T14:52:33Z"
+created: "2026-01-28"
 ---
 
 # BLOCKER: Authentication Strategy
 
 ## Context
-
-The PRD requires "enterprise-ready authentication" but doesn't specify
-whether this means supporting existing enterprise identity providers
-or building custom SSO.
+The PRD mentions "enterprise SSO" but doesn't specify...
 
 ## Question
-
-Should we integrate with enterprise identity providers (Auth0, Okta)
-or build custom SSO capabilities?
+Should we support SAML, OIDC, or both?
 
 ## Options
-
-### Option A: Auth0 Integration
-
-- Pros: Fast to implement, battle-tested, SOC2 compliant
-- Cons: Recurring cost, vendor dependency
-
-### Option B: Custom SSO
-
-- Pros: Full control, no vendor lock-in
-- Cons: Significant development effort, security risk
+- **Option A:** SAML only (enterprise standard)
+- **Option B:** OIDC only (modern, easier)
+- **Option C:** Both (maximum compatibility)
 
 ## Recommendation
-
-Option A (Auth0) — matches the "rapid prototyping" philosophy
-and enterprise requirements can be met immediately.
+Option A — matches enterprise requirements
 
 ---
 
 ## Your Answer (required to resume)
-
-**Decision**: ___________
-**Reason**: ___________
-**Date**: ___________
+**Decision:** ___
+**Reason:** ___
 ```
 
-### Resolution
+### Lifecycle
 
-1. User changes `status: pending` → `status: resolved`
-2. User fills in "Your Answer" section
-3. User runs `ncrew resume`
-4. Orchestrator includes the answer in the next expert's context
+```
+Expert detects ambiguity
+         │
+         ▼
+Creates questions/architect-001-auth.md
+  status: pending
+         │
+         ▼
+Orchestrator detects → PAUSE
+         │
+         ▼
+You write answer, set status: resolved
+         │
+         ▼
+ncrew resume
+         │
+         ▼
+Loop continues with your answer as context
+```
 
 ---
 
-## CREW_COMPLETE (Termination Signal)
+## CREW_COMPLETE
 
 ### Purpose
 
-An empty file that signals project completion. When an expert finishes the last task and confirms all phases are done, it creates this file.
+Empty file signaling project completion.
 
-### Why a File Signal?
+### Why a File?
 
-Following the DLP pattern:
-
-- **Simple detection**: Orchestrator just checks `file_exists("CREW_COMPLETE")`
-- **Expert decides**: The expert has full context to know when truly done
-- **No parsing**: Orchestrator doesn't need to parse tasks.md
+- **Simple detection:** Just check `file_exists("CREW_COMPLETE")`
+- **Expert decides:** Expert has full context to know when done
+- **No parsing:** Orchestrator doesn't parse tasks.md
 
 ### Expert Logic
 
-The expert's instructions include:
+```
+After completing task:
 
-```markdown
-## Termination
-
-After completing your task:
-
-1. Check tasks.md — are ALL tasks in ALL phases checked [x]?
-2. If YES → run: `touch CREW_COMPLETE` and end your turn
-3. If NO → end your turn normally (loop will restart you)
+1. Check tasks.md — are ALL tasks in ALL phases [x]?
+   ├── YES → touch CREW_COMPLETE && end turn
+   └── NO  → end turn (loop restarts)
 ```
 
 ### Orchestrator Check
 
 ```
-CHECK TERMINATION (after each iteration):
-
-1. File CREW_COMPLETE exists?
-   └── YES → EXIT (success)
-
-2. Check questions/ directory
-   └── Any file with status: pending? → PAUSE
-
-3. Check manifest.yml human_gates
-   └── Current phase in gates AND phase just completed? → PAUSE
-
-4. Check iteration counter
-   └── iteration >= max_iterations? → EXIT (safety)
-
-5. Check cost tracker
-   └── cost_so_far >= max_cost? → EXIT (budget)
-
+1. CREW_COMPLETE exists? → EXIT success
+2. questions/ has pending? → PAUSE
+3. Phase in human_gates? → PAUSE
+4. iteration >= max? → EXIT safety
+5. cost >= max? → EXIT budget
 6. Otherwise → LOOP
 ```
 
 ---
 
-## Example: State Evolution
+## State Evolution Example
 
 ### Start (Iteration 1)
 
@@ -314,7 +245,7 @@ current_iteration: 1
 - [ ] ADR-001: Frontend
 ```
 
-### End (All phases complete)
+### End (All Complete)
 
 ```yaml
 # INDEX.md
@@ -336,14 +267,12 @@ current_iteration: 47
 - [x] Generate CHANGELOG
 ```
 
-**CREW_COMPLETE** file exists → Orchestrator exits with success.
-
-Note: If `human_gates: [discovery]` is configured, execution pauses after Discovery completes.
+`CREW_COMPLETE` file exists → Orchestrator exits successfully.
 
 ---
 
 ## Further Reading
 
-- [Architecture](../concepts/architecture.md) — The execution loop
 - [Project Structure](project-structure.md) — All generated files
-- [Expert Format](expert-format.md) — How experts are defined
+- [Execution Loop](execution-loop.md) — How the loop works
+- [Expert Format](../crew-development/expert-format.md) — How experts are defined
